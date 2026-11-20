@@ -598,8 +598,16 @@ local OnlineLayout = Instance.new("UIListLayout")
 OnlineLayout.Parent = OnlineScroll
 OnlineLayout.SortOrder = Enum.SortOrder.LayoutOrder
 OnlineLayout.Padding = UDim.new(0, 4)
-local avatarCache, userIdCache, activeScriptUsers = {}, {}, {}
+local avatarCache, userIdCache, activeScriptUsers, reactBadgeMap = {}, {}, {}, {}
 local hasSeenFirstMessage = false
+local currentGameName = "Roblox"
+
+task.spawn(function()
+	local ok, info = pcall(function() return MarketplaceService:GetProductInfoAsync(game.PlaceId) end)
+	if ok and info and type(info.Name) == "string" and info.Name ~= "" then
+		currentGameName = info.Name
+	end
+end)
 
 local function unlockChatStream()
 	if not hasSeenFirstMessage then
@@ -643,6 +651,84 @@ local function applyAvatarAsync(avatarImg, username, userId)
 	end)
 end
 
+local ProfileModal = Instance.new("Frame")
+ProfileModal.Parent = ChatBox
+ProfileModal.Position = UDim2.new(0, 6, 0.11, 0)
+ProfileModal.Size = UDim2.new(0, 218, 0, 256)
+ProfileModal.BackgroundColor3 = Color3.fromRGB(16, 17, 24)
+ProfileModal.BackgroundTransparency = 0.08
+ProfileModal.BorderSizePixel = 0
+ProfileModal.Visible = false
+ProfileModal.ZIndex = 22
+Instance.new("UICorner", ProfileModal).CornerRadius = UDim.new(0, 12)
+
+local CloseProfileBtn = Instance.new("TextButton")
+CloseProfileBtn.Parent = ProfileModal
+CloseProfileBtn.Position = UDim2.new(1, -24, 0, 6)
+CloseProfileBtn.Size = UDim2.new(0, 18, 0, 18)
+CloseProfileBtn.BackgroundColor3 = Color3.fromRGB(220, 65, 65)
+CloseProfileBtn.Font = Enum.Font.GothamBold
+CloseProfileBtn.Text = "X"
+CloseProfileBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseProfileBtn.TextSize = 9
+CloseProfileBtn.ZIndex = 23
+Instance.new("UICorner", CloseProfileBtn).CornerRadius = UDim.new(1, 0)
+CloseProfileBtn.MouseButton1Click:Connect(function() ProfileModal.Visible = false end)
+
+local BigAvatar = Instance.new("ImageLabel")
+BigAvatar.Parent = ProfileModal
+BigAvatar.AnchorPoint = Vector2.new(0.5, 0)
+BigAvatar.Position = UDim2.new(0.5, 0, 0, 12)
+BigAvatar.Size = UDim2.new(0, 60, 0, 60)
+BigAvatar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+BigAvatar.BackgroundTransparency = 0.5
+BigAvatar.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+BigAvatar.ScaleType = Enum.ScaleType.Crop
+BigAvatar.ZIndex = 23
+Instance.new("UICorner", BigAvatar).CornerRadius = UDim.new(1, 0)
+
+local ProfileCurrentName = makeCardLabel(ProfileModal, UDim2.new(0, 10, 0, 76), UDim2.new(1, -20, 0, 16), Enum.Font.GothamBold, "", Color3.fromRGB(255, 220, 120), 11.5)
+ProfileCurrentName.TextXAlignment = Enum.TextXAlignment.Center
+ProfileCurrentName.ZIndex = 23
+
+local ProfileHandleName = makeCardLabel(ProfileModal, UDim2.new(0, 10, 0, 92), UDim2.new(1, -20, 0, 13), Enum.Font.Gotham, "", Color3.fromRGB(185, 200, 225), 9)
+ProfileHandleName.TextXAlignment = Enum.TextXAlignment.Center
+ProfileHandleName.ZIndex = 23
+
+local ProfileInfoBody = makeCardLabel(ProfileModal, UDim2.new(0, 12, 0, 112), UDim2.new(1, -24, 0, 136), Enum.Font.GothamMedium, "", Color3.fromRGB(240, 244, 255), 10)
+ProfileInfoBody.TextWrapped = true
+ProfileInfoBody.TextYAlignment = Enum.TextYAlignment.Top
+ProfileInfoBody.ZIndex = 23
+
+local function openUserProfile(rawUser, userId)
+	local uname = tostring(rawUser or "Player")
+	if uname == "" or uname == "Hệ thống" then return end
+	local plr = Players:FindFirstChild(uname)
+	local curName = (plr and plr.DisplayName) or uname
+	local resolvedId = resolveUserId(uname, userId) or 0
+	BigAvatar.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+	applyAvatarAsync(BigAvatar, uname, resolvedId)
+	ProfileCurrentName.Text = curName
+	ProfileHandleName.Text = "@" .. uname
+	ProfileInfoBody.Text = "Tên: " .. curName .. "\nId: " .. tostring(resolvedId) .. "\nNgày tạo: Đang tải...\nGame: " .. tostring(currentGameName)
+	ProfileModal.Visible = true
+	if resolvedId > 0 and reqFunc then
+		task.spawn(function()
+			local ok, res = pcall(function()
+				return reqFunc({ Url = "https://users.roblox.com/v1/users/" .. tostring(resolvedId), Method = "GET" })
+			end)
+			local d = ok and res and safeDecode(res.Body)
+			if type(d) == "table" and type(d.created) == "string" then
+				local y, m, day = d.created:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)")
+				local dateStr = (y and m and day) and (day .. "/" .. m .. "/" .. y) or d.created
+				if ProfileModal.Visible then
+					ProfileInfoBody.Text = "Tên: " .. curName .. "\nId: " .. tostring(resolvedId) .. "\nNgày tạo: " .. dateStr .. "\nGame: " .. tostring(currentGameName)
+				end
+			end
+		end)
+	end
+end
+
 local function sendRemoteFriendRequest(targetUser, targetId)
 	local resolvedId = resolveUserId(targetUser, targetId)
 	if not resolvedId or resolvedId <= 0 then return end
@@ -651,7 +737,6 @@ local function sendRemoteFriendRequest(targetUser, targetId)
 		pcall(function() LocalPlayer:RequestFriendship(targetPlr) end)
 		pcall(function() StarterGui:SetCore("PromptSendFriendRequest", targetPlr) end)
 	end
-	local reqFunc = (syn and syn.request) or (http and http.request) or request or http_request
 	if reqFunc then
 		task.spawn(function()
 			pcall(function()
@@ -659,11 +744,41 @@ local function sendRemoteFriendRequest(targetUser, targetId)
 					Url = "https://friends.roblox.com/v1/users/" .. tostring(resolvedId) .. "/request-friendship",
 					Method = "POST",
 					Headers = { ["Content-Type"] = "application/json" },
-					Body = HttpService:JSONEncode({ friendshipOriginSourceType = "PlayerSearch" })
+					Body = safeEncode({ friendshipOriginSourceType = "PlayerSearch" })
 				})
 			end)
 		end)
 	end
+end
+
+local function applyReactionToBadge(msgId, emoji)
+	local midNum = tonumber(msgId)
+	if not midNum or midNum <= 0 or type(emoji) ~= "string" or emoji == "" then return end
+	local badge = reactBadgeMap[midNum]
+	if badge and badge.Parent then
+		badge.Text = emoji
+		badge.Visible = true
+	end
+end
+
+local function publishReaction(msgId, emoji)
+	applyReactionToBadge(msgId, emoji)
+	local midNum = tonumber(msgId)
+	if not midNum or midNum <= 0 or not reqFunc then return end
+	task.spawn(function()
+		pcall(function()
+			reqFunc({
+				Url = CHAT_API_URL .. "/react",
+				Method = "POST",
+				Headers = { ["Content-Type"] = "application/json" },
+				Body = safeEncode({
+					messageId = midNum,
+					emoji = emoji,
+					user = (LocalPlayer and LocalPlayer.Name) or "Player"
+				})
+			})
+		end)
+	end)
 end
 
 local ActionSheet = Instance.new("Frame")
@@ -781,9 +896,13 @@ for i, em in ipairs(emojis) do
 	eb.ZIndex = 22
 	Instance.new("UICorner", eb).CornerRadius = UDim.new(1, 0)
 	eb.MouseButton1Click:Connect(function()
-		if selectedMsgTarget and selectedMsgTarget.reactLabel then
-			selectedMsgTarget.reactLabel.Text = em
-			selectedMsgTarget.reactLabel.Visible = true
+		if selectedMsgTarget then
+			if selectedMsgTarget.msgId and selectedMsgTarget.msgId > 0 then
+				publishReaction(selectedMsgTarget.msgId, em)
+			elseif selectedMsgTarget.reactLabel then
+				selectedMsgTarget.reactLabel.Text = em
+				selectedMsgTarget.reactLabel.Visible = true
+			end
 		end
 		ActionSheet.Visible = false
 	end)
@@ -806,44 +925,48 @@ local function rebuildOnlineList()
 	for _, child in ipairs(OnlineScroll:GetChildren()) do
 		if child:IsA("Frame") then child:Destroy() end
 	end
+	local nowSec = os.time()
 	local count = 0
-	for _, info in pairs(activeScriptUsers) do
-		count += 1
-		local item = Instance.new("Frame")
-		item.Parent = OnlineScroll
-		item.LayoutOrder = count
-		item.Size = UDim2.new(1, 0, 0, 34)
-		item.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
-		item.BackgroundTransparency = 0.25
-		item.BorderSizePixel = 0
-		item.ZIndex = 16
-		Instance.new("UICorner", item).CornerRadius = UDim.new(0, 7)
+	for rName, info in pairs(activeScriptUsers) do
+		local isRecent = (type(info.lastSeen) ~= "number") or (math.abs(nowSec - info.lastSeen) <= 65)
+		if isRecent then
+			count += 1
+			local item = Instance.new("Frame")
+			item.Parent = OnlineScroll
+			item.LayoutOrder = count
+			item.Size = UDim2.new(1, 0, 0, 34)
+			item.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+			item.BackgroundTransparency = 0.25
+			item.BorderSizePixel = 0
+			item.ZIndex = 16
+			Instance.new("UICorner", item).CornerRadius = UDim.new(0, 7)
 
-		local av = Instance.new("ImageButton")
-		av.Parent = item
-		av.Position = UDim2.new(0, 5, 0.5, -12)
-		av.Size = UDim2.new(0, 24, 0, 24)
-		av.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		av.BackgroundTransparency = 0.5
-		av.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
-		av.ScaleType = Enum.ScaleType.Crop
-		av.ZIndex = 17
-		Instance.new("UICorner", av).CornerRadius = UDim.new(1, 0)
-		applyAvatarAsync(av, info.realName, info.userId)
-		av.MouseButton1Click:Connect(function() sendRemoteFriendRequest(info.realName, info.userId) end)
+			local av = Instance.new("ImageButton")
+			av.Parent = item
+			av.Position = UDim2.new(0, 5, 0.5, -12)
+			av.Size = UDim2.new(0, 24, 0, 24)
+			av.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			av.BackgroundTransparency = 0.5
+			av.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+			av.ScaleType = Enum.ScaleType.Crop
+			av.ZIndex = 17
+			Instance.new("UICorner", av).CornerRadius = UDim.new(1, 0)
+			applyAvatarAsync(av, info.realName, info.userId)
+			av.MouseButton1Click:Connect(function() openUserProfile(info.realName, info.userId) end)
 
-		local editedLbl = makeCardLabel(item, UDim2.new(0, 34, 0, 3), UDim2.new(1, -40, 0, 14), Enum.Font.GothamBold, tostring(info.editedName or info.realName), Color3.fromRGB(255, 255, 255), 10.5)
-		editedLbl.ZIndex = 17
+			local editedLbl = makeCardLabel(item, UDim2.new(0, 34, 0, 3), UDim2.new(1, -40, 0, 14), Enum.Font.GothamBold, tostring(info.editedName or rName), Color3.fromRGB(255, 255, 255), 10.5)
+			editedLbl.ZIndex = 17
 
-		local rawLbl = makeCardLabel(item, UDim2.new(0, 34, 0, 17), UDim2.new(1, -40, 0, 13), Enum.Font.Gotham, "@" .. tostring(info.realName), Color3.fromRGB(185, 200, 225), 8.5)
-		rawLbl.ZIndex = 17
+			local rawLbl = makeCardLabel(item, UDim2.new(0, 34, 0, 17), UDim2.new(1, -40, 0, 13), Enum.Font.Gotham, "@" .. tostring(rName), Color3.fromRGB(185, 200, 225), 8.5)
+			rawLbl.ZIndex = 17
+		end
 	end
 	local finalCount = math.max(1, count)
 	OnlineToggleBtn.Text = "● " .. tostring(finalCount) .. " online ▾"
 	OnlineListTitle.Text = "Đang bật script · " .. tostring(finalCount)
 end
 
-local function registerScriptUser(realName, editedName, userId)
+local function registerScriptUser(realName, editedName, userId, lastSeen)
 	local rName = tostring(realName or "")
 	if rName == "" or rName == "Player" or rName == "Hệ thống" or rName == "Hirose x Miyanno" then return end
 	local eName = tostring(editedName or "")
@@ -851,7 +974,9 @@ local function registerScriptUser(realName, editedName, userId)
 		local plr = Players:FindFirstChild(rName)
 		eName = (plr and plr.DisplayName) or rName
 	end
-	activeScriptUsers[rName] = { realName = rName, editedName = eName, userId = tonumber(userId) or 0 }
+	local ts = tonumber(lastSeen) or os.time()
+	if ts > 1e11 then ts = math.floor(ts / 1000) end
+	activeScriptUsers[rName] = { realName = rName, editedName = eName, userId = tonumber(userId) or 0, lastSeen = ts }
 	rebuildOnlineList()
 end
 
@@ -865,11 +990,11 @@ local function formatLockedTime(ts)
 		if ok and type(dt) == "string" and #dt == 5 then return dt end
 	end
 	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
-	return (okNow and nowStr) or "23:58"
+	return (okNow and nowStr) or "01:32"
 end
 
 local msgOrder = 0
-local function appendChatLine(username, text, userId, timestamp, customColor, shouldUnlock, autoCopyText)
+local function appendChatLine(username, text, userId, timestamp, customColor, shouldUnlock, autoCopyText, serverMsgId, initialReaction)
 	if shouldUnlock then
 		unlockChatStream()
 	end
@@ -877,6 +1002,7 @@ local function appendChatLine(username, text, userId, timestamp, customColor, sh
 	local safeUser = tostring(username or "Player")
 	local safeText = tostring(text or "")
 	local safeId = tonumber(userId) or 0
+	local midNum = tonumber(serverMsgId) or 0
 	local myName = (LocalPlayer and LocalPlayer.Name) or ""
 	local isSelf = (myName ~= "" and safeUser == myName)
 	local isAdmin = (safeUser == ADMIN_ROBLOX_USERNAME)
@@ -904,7 +1030,7 @@ local function appendChatLine(username, text, userId, timestamp, customColor, sh
 	Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
 	applyAvatarAsync(avatarImg, safeUser, safeId)
 	avatarImg.MouseButton1Click:Connect(function()
-		sendRemoteFriendRequest(safeUser, safeId)
+		openUserProfile(safeUser, safeId)
 	end)
 
 	local nameLbl = Instance.new("TextLabel")
@@ -981,6 +1107,14 @@ local function appendChatLine(username, text, userId, timestamp, customColor, sh
 	reactBadge.ZIndex = 13
 	Instance.new("UICorner", reactBadge).CornerRadius = UDim.new(1, 0)
 
+	if midNum > 0 then
+		reactBadgeMap[midNum] = reactBadge
+		if type(initialReaction) == "string" and initialReaction ~= "" then
+			reactBadge.Text = initialReaction
+			reactBadge.Visible = true
+		end
+	end
+
 	local rPad = Instance.new("UIPadding")
 	rPad.Parent = row
 	rPad.PaddingBottom = UDim.new(0, 4)
@@ -993,7 +1127,7 @@ local function appendChatLine(username, text, userId, timestamp, customColor, sh
 			if bubble and bubble.Parent then bubble.Text = safeText end
 			return
 		end
-		selectedMsgTarget = { user = safeUser, text = safeText, userId = safeId, reactLabel = reactBadge }
+		selectedMsgTarget = { user = safeUser, text = safeText, userId = safeId, msgId = midNum, reactLabel = reactBadge }
 		ActionSheet.Visible = true
 	end)
 
@@ -1037,7 +1171,7 @@ local function openChatBox()
 end
 local function closeChatBox()
 	ChatBox.Visible = false
-	OnlinePanel.Visible, ActionSheet.Visible = false, false
+	OnlinePanel.Visible, ActionSheet.Visible, ProfileModal.Visible = false, false, false
 	ChatPill.Visible = true
 end
 
@@ -1083,22 +1217,23 @@ local clearCycleSignal = 0
 
 task.spawn(function()
 	while ChatGui and ChatGui.Parent do
-		task.wait(60)
+		task.wait(300)
 		appendChatLine("Hệ thống", DISCORD_LINK, 0, os.time(), Color3.fromRGB(170, 195, 255), true, DISCORD_LINK)
 	end
 end)
 
 task.spawn(function()
 	while ChatGui and ChatGui.Parent do
-		task.wait(180)
+		task.wait(1800)
 		clearCycleSignal += 1
+		reactBadgeMap = {}
 		for _, child in ipairs(MsgScroll:GetChildren()) do
 			if child:IsA("Frame") then
 				child:Destroy()
 			end
 		end
 		MsgScroll.CanvasPosition = Vector2.new(0, 0)
-		appendChatLine("Hệ thống", "Mỗi 3 phút hệ thống sẽ tự xoá toàn bộ tin nhắn!", 0, os.time(), Color3.fromRGB(255, 210, 130), true)
+		appendChatLine("Hệ thống", "Mỗi 30 phút hệ thống sẽ tự xoá toàn bộ tin nhắn!", 0, os.time(), Color3.fromRGB(255, 210, 130), true)
 	end
 end)
 
@@ -1107,19 +1242,26 @@ task.spawn(function()
 	local myUser = (LocalPlayer and LocalPlayer.Name) or "Player"
 	local myDisplay = (LocalPlayer and LocalPlayer.DisplayName) or myUser
 	local myId = (LocalPlayer and LocalPlayer.UserId) or 0
-	registerScriptUser(myUser, myDisplay, myId)
+	registerScriptUser(myUser, myDisplay, myId, os.time())
 
 	local function syncActiveUsers(listData)
 		if type(listData) ~= "table" then return end
-		local fresh = { [myUser] = { realName = myUser, editedName = myDisplay, userId = myId } }
+		local fresh = { [myUser] = { realName = myUser, editedName = myDisplay, userId = myId, lastSeen = os.time() } }
 		for _, u in ipairs(listData) do
 			if type(u) == "table" then
 				local rName = tostring(u.user or u.username or u.realName or "")
 				if rName ~= "" and rName ~= "Player" then
-					fresh[rName] = { realName = rName, editedName = tostring(u.displayName or u.editedName or u.nick or rName), userId = tonumber(u.userId) or 0 }
+					local seenTs = tonumber(u.lastSeen or u.updatedAt or u.time) or os.time()
+					if seenTs > 1e11 then seenTs = math.floor(seenTs / 1000) end
+					fresh[rName] = {
+						realName = rName,
+						editedName = tostring(u.displayName or u.editedName or u.nick or rName),
+						userId = tonumber(u.userId) or 0,
+						lastSeen = seenTs
+					}
 				end
 			elseif type(u) == "string" and u ~= "" then
-				fresh[u] = { realName = u, editedName = u, userId = 0 }
+				fresh[u] = { realName = u, editedName = u, userId = 0, lastSeen = os.time() }
 			end
 		end
 		activeScriptUsers = fresh
@@ -1133,14 +1275,14 @@ task.spawn(function()
 					Url = CHAT_API_URL .. "/ping",
 					Method = "POST",
 					Headers = { ["Content-Type"] = "application/json" },
-					Body = safeEncode({ user = myUser, displayName = myDisplay, userId = myId, server = CHAT_SERVER_TAG })
+					Body = safeEncode({ user = myUser, displayName = myDisplay, userId = myId, server = CHAT_SERVER_TAG, placeId = game.PlaceId })
 				})
 				if r and r.Body then
 					local pData = safeDecode(r.Body)
 					if type(pData) == "table" then syncActiveUsers(pData.users or pData.activeUsers) end
 				end
 			end)
-			task.wait(25)
+			task.wait(20)
 		end
 	end)
 
@@ -1153,14 +1295,22 @@ task.spawn(function()
 			local data = safeDecode(res.Body)
 			if type(data) == "table" and data.ok then
 				syncActiveUsers(data.users or data.activeUsers)
+				if type(data.reactions) == "table" then
+					for rMid, rEmo in pairs(data.reactions) do
+						applyReactionToBadge(rMid, rEmo)
+					end
+				end
 				if type(data.messages) == "table" then
 					for _, m in ipairs(data.messages) do
 						local mid = tonumber(m.id) or 0
+						local rx = m.reaction or m.emoji
 						if mid > lastMsgId then
 							lastMsgId = mid
 							if seededInitialHistory and seenClearAtStart == clearCycleSignal then
-								appendChatLine(tostring(m.user or "Player"), tostring(m.text or ""), m.userId, m.time or m.timestamp or m.createdAt, nil, true)
+								appendChatLine(tostring(m.user or "Player"), tostring(m.text or ""), m.userId, m.time or m.timestamp or m.createdAt, nil, true, nil, mid, rx)
 							end
+						elseif mid > 0 and type(rx) == "string" and rx ~= "" then
+							applyReactionToBadge(mid, rx)
 						end
 					end
 					seededInitialHistory = true
