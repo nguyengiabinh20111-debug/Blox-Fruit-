@@ -15,6 +15,7 @@ end
 local DISCORD_LINK = "https://discord.gg/uqhEpzXy9q"
 local CHAT_API_URL = "https://hirosemiyano.nguyengiabinh20111.workers.dev"
 local CHAT_SERVER_TAG = tostring(game.JobId ~= "" and string.sub(game.JobId, 1, 8) or "Global")
+local ADMIN_ROBLOX_USERNAME = "djia9243"
 
 local SCRIPTS = {
 	Chilli = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/tienkhanh1/spicy/main/Chilli.lua"))()',
@@ -555,7 +556,7 @@ ChatGui.ResetOnSpawn = false
 local ChatPill = Instance.new("TextButton")
 ChatPill.Name = "ChatPill"
 ChatPill.Parent = ChatGui
-ChatPill.Position = UDim2.new(0, 12, 0.72, 0)
+ChatPill.Position = UDim2.new(0, 12, 0.76, 0)
 ChatPill.Size = UDim2.new(0, 96, 0, 28)
 ChatPill.BackgroundColor3 = Color3.fromRGB(20, 16, 26)
 ChatPill.BackgroundTransparency = 0.25
@@ -571,10 +572,10 @@ MakeDraggable(ChatPill)
 local ChatBox = Instance.new("Frame")
 ChatBox.Name = "ChatBox"
 ChatBox.Parent = ChatGui
-ChatBox.Position = UDim2.new(0, 10, 0.08, 0)
-ChatBox.Size = UDim2.new(0, 215, 0, 340)
-ChatBox.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
-ChatBox.BackgroundTransparency = 0.25
+ChatBox.Position = UDim2.new(0, 10, 0.04, 0)
+ChatBox.Size = UDim2.new(0, 245, 0, 368)
+ChatBox.BackgroundColor3 = Color3.fromRGB(18, 18, 26)
+ChatBox.BackgroundTransparency = 0.35
 ChatBox.ClipsDescendants = true
 ChatBox.Visible = false
 ChatBox.ZIndex = 9
@@ -590,7 +591,7 @@ ChatBg.Position = UDim2.new(0, 0, 0, 0)
 ChatBg.Image = "rbxassetid://73666208807237"
 ChatBg.ScaleType = Enum.ScaleType.Crop
 ChatBg.BackgroundTransparency = 1
-ChatBg.ImageTransparency = 0.05
+ChatBg.ImageTransparency = 0
 ChatBg.ZIndex = 9
 Instance.new("UICorner", ChatBg).CornerRadius = UDim.new(0, 12)
 
@@ -598,42 +599,55 @@ local ChatDim = Instance.new("Frame")
 ChatDim.Parent = ChatBox
 ChatDim.Size = UDim2.new(1, 0, 1, 0)
 ChatDim.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-ChatDim.BackgroundTransparency = 0.72
+ChatDim.BackgroundTransparency = 0.84
 ChatDim.BorderSizePixel = 0
 ChatDim.ZIndex = 9
 Instance.new("UICorner", ChatDim).CornerRadius = UDim.new(0, 12)
 local ChatAuthorLabel = Instance.new("TextLabel")
 ChatAuthorLabel.Parent = ChatBox
-ChatAuthorLabel.Position = UDim2.new(0, 8, 0, 4)
-ChatAuthorLabel.Size = UDim2.new(1, -34, 0, 15)
+ChatAuthorLabel.Position = UDim2.new(0, 8, 0, 3)
+ChatAuthorLabel.Size = UDim2.new(1, -34, 0, 18)
 ChatAuthorLabel.BackgroundTransparency = 1
 ChatAuthorLabel.Font = Enum.Font.GothamBold
 ChatAuthorLabel.Text = "Tác giả: Hirose x Miyanno"
-ChatAuthorLabel.TextColor3 = Color3.fromRGB(255, 200, 125)
-ChatAuthorLabel.TextSize = 10.5
-ChatAuthorLabel.TextStrokeTransparency = 0.25
+ChatAuthorLabel.TextColor3 = Color3.fromRGB(255, 210, 130)
+ChatAuthorLabel.TextSize = 13
+ChatAuthorLabel.TextStrokeTransparency = 0.2
 ChatAuthorLabel.TextXAlignment = Enum.TextXAlignment.Left
 ChatAuthorLabel.ZIndex = 11
 
 local ChatDiscordSub = Instance.new("TextLabel")
 ChatDiscordSub.Parent = ChatBox
-ChatDiscordSub.Position = UDim2.new(0, 8, 0, 18)
-ChatDiscordSub.Size = UDim2.new(1, -34, 0, 13)
+ChatDiscordSub.Position = UDim2.new(0, 8, 0, 20)
+ChatDiscordSub.Size = UDim2.new(1, -92, 0, 13)
 ChatDiscordSub.BackgroundTransparency = 1
 ChatDiscordSub.Font = Enum.Font.GothamMedium
 ChatDiscordSub.Text = "https://discord.gg/uqhEpzXy9q"
-ChatDiscordSub.TextColor3 = Color3.fromRGB(165, 190, 255)
+ChatDiscordSub.TextColor3 = Color3.fromRGB(170, 195, 255)
 ChatDiscordSub.TextSize = 8.5
 ChatDiscordSub.TextStrokeTransparency = 0.25
 ChatDiscordSub.TextXAlignment = Enum.TextXAlignment.Left
 ChatDiscordSub.ZIndex = 11
 
+local OnlineBadge = Instance.new("TextLabel")
+OnlineBadge.Parent = ChatBox
+OnlineBadge.Position = UDim2.new(1, -86, 0, 20)
+OnlineBadge.Size = UDim2.new(0, 58, 0, 13)
+OnlineBadge.BackgroundColor3 = Color3.fromRGB(16, 48, 32)
+OnlineBadge.BackgroundTransparency = 0.35
+OnlineBadge.Font = Enum.Font.GothamBold
+OnlineBadge.Text = "● 1 online"
+OnlineBadge.TextColor3 = Color3.fromRGB(115, 255, 175)
+OnlineBadge.TextSize = 8.5
+OnlineBadge.ZIndex = 11
+Instance.new("UICorner", OnlineBadge).CornerRadius = UDim.new(1, 0)
+
 local HideChatBtn = Instance.new("TextButton")
 HideChatBtn.Parent = ChatBox
-HideChatBtn.Position = UDim2.new(1, -24, 0, 6)
+HideChatBtn.Position = UDim2.new(1, -24, 0, 5)
 HideChatBtn.Size = UDim2.new(0, 18, 0, 18)
-HideChatBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 34)
-HideChatBtn.BackgroundTransparency = 0.35
+HideChatBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+HideChatBtn.BackgroundTransparency = 0.55
 HideChatBtn.Font = Enum.Font.GothamBold
 HideChatBtn.Text = "−"
 HideChatBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -643,10 +657,10 @@ Instance.new("UICorner", HideChatBtn).CornerRadius = UDim.new(0, 5)
 
 local MsgScroll = Instance.new("ScrollingFrame")
 MsgScroll.Parent = ChatBox
-MsgScroll.Position = UDim2.new(0, 6, 0, 34)
-MsgScroll.Size = UDim2.new(1, -12, 1, -66)
+MsgScroll.Position = UDim2.new(0, 6, 0, 36)
+MsgScroll.Size = UDim2.new(1, -12, 1, -68)
 MsgScroll.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-MsgScroll.BackgroundTransparency = 0.78
+MsgScroll.BackgroundTransparency = 0.86
 MsgScroll.BorderSizePixel = 0
 MsgScroll.ScrollBarThickness = 3
 MsgScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -668,27 +682,43 @@ MsgPad.PaddingRight = UDim.new(0, 5)
 
 local avatarCache = {}
 local userIdCache = {}
+local seenUsers = {}
+
+local function updateOnlineDisplay(countFromApi)
+	local n = tonumber(countFromApi)
+	if not n or n < 1 then
+		local c = 0
+		for _ in pairs(seenUsers) do c += 1 end
+		n = math.max(1, c)
+	end
+	OnlineBadge.Text = "● " .. tostring(n) .. " online"
+end
+
+local function formatTimeShort(ts)
+	local num = tonumber(ts)
+	if num and num > 0 then
+		if num > 1e11 then num = math.floor(num / 1000) end
+		local ok, dt = pcall(function() return os.date("%H:%M", num) end)
+		if ok and type(dt) == "string" and #dt == 5 then return dt end
+	end
+	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
+	return (okNow and nowStr) or "vừa xong"
+end
 
 local function resolveUserId(username, userId)
 	local idNum = tonumber(userId)
-	if idNum and idNum > 0 then
-		return idNum
-	end
+	if idNum and idNum > 0 then return idNum end
 	local uname = tostring(username or "")
 	if uname == "" or uname == "Player" or uname == "Hệ thống" or uname == "Hirose x Miyanno" then
 		return nil
 	end
-	if userIdCache[uname] then
-		return userIdCache[uname]
-	end
+	if userIdCache[uname] then return userIdCache[uname] end
 	local plr = Players:FindFirstChild(uname)
 	if plr and plr.UserId > 0 then
 		userIdCache[uname] = plr.UserId
 		return plr.UserId
 	end
-	local ok, fetchedId = pcall(function()
-		return Players:GetUserIdFromNameAsync(uname)
-	end)
+	local ok, fetchedId = pcall(function() return Players:GetUserIdFromNameAsync(uname) end)
 	if ok and tonumber(fetchedId) and tonumber(fetchedId) > 0 then
 		local num = tonumber(fetchedId)
 		userIdCache[uname] = num
@@ -702,9 +732,7 @@ local function applyAvatarAsync(avatarImg, username, userId)
 		local idNum = resolveUserId(username, userId)
 		if not idNum then return end
 		if avatarCache[idNum] then
-			if avatarImg and avatarImg.Parent then
-				avatarImg.Image = avatarCache[idNum]
-			end
+			if avatarImg and avatarImg.Parent then avatarImg.Image = avatarCache[idNum] end
 			return
 		end
 		local ok, url = pcall(function()
@@ -712,18 +740,29 @@ local function applyAvatarAsync(avatarImg, username, userId)
 		end)
 		if ok and type(url) == "string" and url ~= "" then
 			avatarCache[idNum] = url
-			if avatarImg and avatarImg.Parent then
-				avatarImg.Image = url
-			end
+			if avatarImg and avatarImg.Parent then avatarImg.Image = url end
 		end
 	end)
 end
 
+local function isVerifiedAdmin(rawUsername)
+	return tostring(rawUsername or "") == ADMIN_ROBLOX_USERNAME
+end
+
 local msgOrder = 0
-local function appendChatLine(username, text, userId, color)
+local function appendChatLine(username, text, userId, timestamp, customColor)
 	msgOrder += 1
 	local safeUser = tostring(username or "Player")
 	local safeText = tostring(text or "")
+	local myName = (LocalPlayer and LocalPlayer.Name) or ""
+	local isSelf = (myName ~= "" and safeUser == myName)
+	local isAdmin = isVerifiedAdmin(safeUser)
+	local timeStr = formatTimeShort(timestamp)
+
+	if safeUser ~= "" and safeUser ~= "Hệ thống" and safeUser ~= "Hirose x Miyanno" then
+		seenUsers[safeUser] = true
+		updateOnlineDisplay()
+	end
 
 	local row = Instance.new("Frame")
 	row.Name = "MsgRow_" .. tostring(msgOrder)
@@ -731,42 +770,49 @@ local function appendChatLine(username, text, userId, color)
 	row.LayoutOrder = msgOrder
 	row.Size = UDim2.new(1, 0, 0, 42)
 	row.AutomaticSize = Enum.AutomaticSize.Y
-	row.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	row.BackgroundTransparency = 0.72
+	row.BackgroundColor3 = isSelf and Color3.fromRGB(35, 22, 12) or Color3.fromRGB(0, 0, 0)
+	row.BackgroundTransparency = isSelf and 0.74 or 0.78
 	row.BorderSizePixel = 0
 	row.ZIndex = 10
-	Instance.new("UICorner", row).CornerRadius = UDim.new(0, 7)
+	Instance.new("UICorner", row).CornerRadius = UDim.new(0, 8)
+	if isAdmin then
+		local st = Instance.new("UIStroke", row)
+		st.Color = Color3.fromRGB(255, 65, 65)
+		st.Thickness = 1
+		st.Transparency = 0.35
+	end
 
 	local avatarImg = Instance.new("ImageLabel")
 	avatarImg.Parent = row
-	avatarImg.Position = UDim2.new(0, 5, 0, 6)
 	avatarImg.Size = UDim2.new(0, 26, 0, 26)
-	avatarImg.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
-	avatarImg.BackgroundTransparency = 0.45
+	avatarImg.Position = isSelf and UDim2.new(1, -31, 0, 6) or UDim2.new(0, 5, 0, 6)
+	avatarImg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	avatarImg.BackgroundTransparency = 0.65
 	avatarImg.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
 	avatarImg.ScaleType = Enum.ScaleType.Crop
 	avatarImg.ZIndex = 11
 	Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
 	applyAvatarAsync(avatarImg, safeUser, userId)
 
+	local headerText = safeUser .. (isAdmin and " [ADMIN]" or "") .. " · " .. timeStr
 	local nameLabel = Instance.new("TextLabel")
 	nameLabel.Parent = row
-	nameLabel.Position = UDim2.new(0, 35, 0, 3)
-	nameLabel.Size = UDim2.new(1, -40, 0, 15)
+	nameLabel.Position = isSelf and UDim2.new(0, 6, 0, 3) or UDim2.new(0, 35, 0, 3)
+	nameLabel.Size = UDim2.new(1, -41, 0, 14)
 	nameLabel.BackgroundTransparency = 1
 	nameLabel.Font = Enum.Font.GothamBold
-	nameLabel.Text = safeUser
-	nameLabel.TextColor3 = color or Color3.fromRGB(255, 210, 130)
+	nameLabel.Text = headerText
+	nameLabel.TextColor3 = customColor or (isAdmin and Color3.fromRGB(255, 95, 95) or (isSelf and Color3.fromRGB(255, 210, 125) or Color3.fromRGB(165, 225, 255)))
 	nameLabel.TextStrokeTransparency = 0.25
-	nameLabel.TextSize = 12
+	nameLabel.TextSize = 10.5
 	nameLabel.TextWrapped = true
-	nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+	nameLabel.TextXAlignment = isSelf and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
 	nameLabel.ZIndex = 11
 
 	local bodyLabel = Instance.new("TextLabel")
 	bodyLabel.Parent = row
-	bodyLabel.Position = UDim2.new(0, 35, 0, 18)
-	bodyLabel.Size = UDim2.new(1, -40, 0, 16)
+	bodyLabel.Position = isSelf and UDim2.new(0, 6, 0, 17) or UDim2.new(0, 35, 0, 17)
+	bodyLabel.Size = UDim2.new(1, -41, 0, 16)
 	bodyLabel.AutomaticSize = Enum.AutomaticSize.Y
 	bodyLabel.BackgroundTransparency = 1
 	bodyLabel.Font = Enum.Font.GothamMedium
@@ -775,7 +821,7 @@ local function appendChatLine(username, text, userId, color)
 	bodyLabel.TextStrokeTransparency = 0.25
 	bodyLabel.TextSize = 11.5
 	bodyLabel.TextWrapped = true
-	bodyLabel.TextXAlignment = Enum.TextXAlignment.Left
+	bodyLabel.TextXAlignment = isSelf and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
 	bodyLabel.ZIndex = 11
 
 	local rowPad = Instance.new("UIPadding")
@@ -792,10 +838,10 @@ ChatInput.Parent = ChatBox
 ChatInput.Position = UDim2.new(0, 6, 1, -27)
 ChatInput.Size = UDim2.new(1, -54, 0, 22)
 ChatInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-ChatInput.BackgroundTransparency = 0.68
+ChatInput.BackgroundTransparency = 0.78
 ChatInput.Font = Enum.Font.Gotham
 ChatInput.PlaceholderText = "Nhập tin nhắn..."
-ChatInput.PlaceholderColor3 = Color3.fromRGB(185, 190, 205)
+ChatInput.PlaceholderColor3 = Color3.fromRGB(205, 210, 225)
 ChatInput.Text = ""
 ChatInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 ChatInput.TextSize = 10.5
@@ -845,7 +891,7 @@ local function sendCrossChat()
 		isSending = false
 		SendChatBtn.Text = "GỬI"
 		if not (ok and res and (res.StatusCode == 200 or res.Success)) then
-			appendChatLine("Hệ thống", "Gửi lỗi, thử lại sau", 0, Color3.fromRGB(255, 110, 110))
+			appendChatLine("Hệ thống", "Gửi lỗi, thử lại sau", 0, os.time(), Color3.fromRGB(255, 110, 110))
 		end
 	end)
 end
@@ -856,18 +902,49 @@ ChatInput.FocusLost:Connect(function(enterPressed) if enterPressed then sendCros
 local lastMsgId = 0
 task.spawn(function()
 	if not reqFunc then return end
-	appendChatLine("Hirose x Miyanno", "Đã kết nối chat xuyên server!", 0, Color3.fromRGB(110, 255, 175))
+	local myUser = (LocalPlayer and LocalPlayer.Name) or "Player"
+	local myId = (LocalPlayer and LocalPlayer.UserId) or 0
+	seenUsers[myUser] = true
+	updateOnlineDisplay()
+	appendChatLine("Hirose x Miyanno", "Đã kết nối chat xuyên server!", 0, os.time(), Color3.fromRGB(110, 255, 175))
+
+	task.spawn(function()
+		while true do
+			pcall(function()
+				local r = reqFunc({
+					Url = CHAT_API_URL .. "/ping",
+					Method = "POST",
+					Headers = { ["Content-Type"] = "application/json" },
+					Body = safeEncode({ user = myUser, userId = myId, server = CHAT_SERVER_TAG })
+				})
+				if r and r.Body then
+					local pData = safeDecode(r.Body)
+					if type(pData) == "table" and tonumber(pData.online) then
+						updateOnlineDisplay(pData.online)
+					end
+				end
+			end)
+			task.wait(25)
+		end
+	end)
+
 	while true do
 		local url = CHAT_API_URL .. "/messages" .. (lastMsgId > 0 and ("?after=" .. tostring(lastMsgId)) or "")
 		local ok, res = pcall(function() return reqFunc({ Url = url, Method = "GET" }) end)
 		if ok and res and (res.StatusCode == 200 or res.Success) then
 			local data = safeDecode(res.Body)
-			if type(data) == "table" and data.ok and type(data.messages) == "table" then
-				for _, m in ipairs(data.messages) do
-					local mid = tonumber(m.id) or 0
-					if mid > lastMsgId then
-						lastMsgId = mid
-						appendChatLine(tostring(m.user or "Player"), tostring(m.text or ""), m.userId, Color3.fromRGB(255, 210, 130))
+			if type(data) == "table" and data.ok then
+				if tonumber(data.online) then
+					updateOnlineDisplay(data.online)
+				end
+				if type(data.messages) == "table" then
+					for _, m in ipairs(data.messages) do
+						local mid = tonumber(m.id) or 0
+						if mid > lastMsgId then
+							lastMsgId = mid
+							local mUser = tostring(m.user or "Player")
+							appendChatLine(mUser, tostring(m.text or ""), m.userId, m.time or m.timestamp or m.createdAt)
+						end
 					end
 				end
 			end
