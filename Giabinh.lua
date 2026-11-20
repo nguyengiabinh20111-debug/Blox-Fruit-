@@ -21,6 +21,7 @@ local DISCORD_LINK = "https://discord.gg/uqhEpzXy9q"
 local CHAT_API_URL = "https://hirosemiyano.nguyengiabinh20111.workers.dev"
 local CHAT_SERVER_TAG = tostring(game.JobId ~= "" and string.sub(game.JobId, 1, 8) or "Global")
 local ADMIN_ROBLOX_USERNAME = "djia9243"
+local CUSTOM_ICON_ASSET = "rbxassetid://106041745164419"
 
 local SCRIPTS = {
 	Chilli = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/tienkhanh1/spicy/main/Chilli.lua"))()',
@@ -448,18 +449,15 @@ ChatGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ChatGui.ResetOnSpawn = false
 attachGui(ChatGui)
 
-local ChatPill = Instance.new("TextButton")
+local ChatPill = Instance.new("ImageButton")
 ChatPill.Name = "ChatPill"
 ChatPill.Parent = ChatGui
 ChatPill.Position = UDim2.new(0, 12, 0.76, 0)
-ChatPill.Size = UDim2.new(0, 96, 0, 28)
-ChatPill.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-ChatPill.BackgroundTransparency = 0.55
-ChatPill.Font = Enum.Font.GothamBold
-ChatPill.Text = "💬 V13 CHAT"
-ChatPill.TextColor3 = Color3.fromRGB(255, 210, 130)
-ChatPill.TextStrokeTransparency = 0.25
-ChatPill.TextSize = 9
+ChatPill.Size = UDim2.new(0, 38, 0, 38)
+ChatPill.BackgroundColor3 = Color3.fromRGB(16, 17, 24)
+ChatPill.BackgroundTransparency = 0.15
+ChatPill.Image = CUSTOM_ICON_ASSET
+ChatPill.ScaleType = Enum.ScaleType.Crop
 ChatPill.ZIndex = 10
 Instance.new("UICorner", ChatPill).CornerRadius = UDim.new(1, 0)
 MakeDraggable(ChatPill)
@@ -545,7 +543,7 @@ OnlinePanel.Parent = ChatBox
 OnlinePanel.Position = UDim2.new(0, 6, 0, 37)
 OnlinePanel.Size = UDim2.new(1, -12, 1, -43)
 OnlinePanel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-OnlinePanel.BackgroundTransparency = 0.72
+OnlinePanel.BackgroundTransparency = 0.14
 OnlinePanel.BorderSizePixel = 0
 OnlinePanel.Visible = false
 OnlinePanel.ZIndex = 14
@@ -629,14 +627,24 @@ end
 
 local ProfileModal = Instance.new("Frame")
 ProfileModal.Parent = ChatBox
-ProfileModal.Position = UDim2.new(0, 12, 0.1, 0)
-ProfileModal.Size = UDim2.new(1, -24, 0, 266)
+ProfileModal.Position = UDim2.new(0, 6, 0.11, 0)
+ProfileModal.Size = UDim2.new(0, 218, 0, 266)
 ProfileModal.BackgroundColor3 = Color3.fromRGB(16, 17, 24)
 ProfileModal.BackgroundTransparency = 0.08
 ProfileModal.BorderSizePixel = 0
 ProfileModal.Visible = false
 ProfileModal.ZIndex = 20
 Instance.new("UICorner", ProfileModal).CornerRadius = UDim.new(0, 12)
+
+local CornerBadgeIcon = Instance.new("ImageLabel")
+CornerBadgeIcon.Parent = ProfileModal
+CornerBadgeIcon.Position = UDim2.new(0, 8, 0, 8)
+CornerBadgeIcon.Size = UDim2.new(0, 20, 0, 20)
+CornerBadgeIcon.BackgroundTransparency = 1
+CornerBadgeIcon.Image = CUSTOM_ICON_ASSET
+CornerBadgeIcon.ScaleType = Enum.ScaleType.Crop
+CornerBadgeIcon.ZIndex = 21
+Instance.new("UICorner", CornerBadgeIcon).CornerRadius = UDim.new(1, 0)
 
 local CloseProfileBtn = Instance.new("TextButton")
 CloseProfileBtn.Parent = ProfileModal
@@ -654,8 +662,8 @@ CloseProfileBtn.MouseButton1Click:Connect(function() ProfileModal.Visible = fals
 local BigAvatar = Instance.new("ImageLabel")
 BigAvatar.Parent = ProfileModal
 BigAvatar.AnchorPoint = Vector2.new(0.5, 0)
-BigAvatar.Position = UDim2.new(0.5, 0, 0, 10)
-BigAvatar.Size = UDim2.new(0, 64, 0, 64)
+BigAvatar.Position = UDim2.new(0.5, 0, 0, 12)
+BigAvatar.Size = UDim2.new(0, 62, 0, 62)
 BigAvatar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 BigAvatar.BackgroundTransparency = 0.5
 BigAvatar.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
@@ -713,19 +721,22 @@ end
 
 local ActionSheet = Instance.new("Frame")
 ActionSheet.Parent = ChatBox
-ActionSheet.Position = UDim2.new(0, 8, 0.44, 0)
-ActionSheet.Size = UDim2.new(1, -16, 0, 82)
-ActionSheet.BackgroundColor3 = Color3.fromRGB(16, 17, 24)
+ActionSheet.Position = UDim2.new(0, 8, 0.42, 0)
+ActionSheet.Size = UDim2.new(1, -16, 0, 88)
+ActionSheet.BackgroundColor3 = Color3.fromRGB(20, 16, 30)
 ActionSheet.BackgroundTransparency = 0.08
 ActionSheet.BorderSizePixel = 0
 ActionSheet.Visible = false
 ActionSheet.ZIndex = 19
-Instance.new("UICorner", ActionSheet).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", ActionSheet).CornerRadius = UDim.new(0, 12)
+local sheetStroke = Instance.new("UIStroke", ActionSheet)
+sheetStroke.Color = Color3.fromRGB(255, 130, 60)
+sheetStroke.Thickness = 1.2
 
 local selectedMsgTarget = nil
-local function makeSheetBtn(pos, size, bg, text)
+local function makeSheetBtn(parent, pos, size, bg, text)
 	local b = Instance.new("TextButton")
-	b.Parent = ActionSheet
+	b.Parent = parent
 	b.Position, b.Size, b.BackgroundColor3 = pos, size, bg
 	b.Font = Enum.Font.GothamBold
 	b.Text = text
@@ -736,34 +747,42 @@ local function makeSheetBtn(pos, size, bg, text)
 	return b
 end
 
-local DmBtn = makeSheetBtn(UDim2.new(0, 6, 0, 6), UDim2.new(0.31, -4, 0, 26), Color3.fromRGB(45, 135, 235), "💬 Nhắn riêng")
-local CopyMsgBtn = makeSheetBtn(UDim2.new(0.34, 0, 0, 6), UDim2.new(0.31, -4, 0, 26), Color3.fromRGB(42, 45, 58), "📋 Chép")
-local ReplyMsgBtn = makeSheetBtn(UDim2.new(0.67, 0, 0, 6), UDim2.new(0.33, -6, 0, 26), Color3.fromRGB(235, 110, 45), "↩ Trả lời")
-
-local ChatInput
-local function setReplyMode(target)
-	if not target or not ChatInput then return end
-	ChatInput.Text = "@" .. tostring(target.user) .. " (" .. tostring(target.text) .. ") "
-	ChatInput:CaptureFocus()
-end
-
-DmBtn.MouseButton1Click:Connect(function()
+makeSheetBtn(ActionSheet, UDim2.new(0, 6, 0, 6), UDim2.new(0.31, -4, 0, 26), Color3.fromRGB(45, 135, 235), "💬 Nhắn riêng").MouseButton1Click:Connect(function()
 	if selectedMsgTarget then setReplyMode(selectedMsgTarget) end
 	ActionSheet.Visible = false
 end)
-CopyMsgBtn.MouseButton1Click:Connect(function()
+makeSheetBtn(ActionSheet, UDim2.new(0.34, 0, 0, 6), UDim2.new(0.31, -4, 0, 26), Color3.fromRGB(42, 45, 58), "📋 Chép").MouseButton1Click:Connect(function()
 	if selectedMsgTarget and setclipboard then pcall(setclipboard, tostring(selectedMsgTarget.text or "")) end
 	ActionSheet.Visible = false
 end)
-ReplyMsgBtn.MouseButton1Click:Connect(function()
+makeSheetBtn(ActionSheet, UDim2.new(0.67, 0, 0, 6), UDim2.new(0.33, -6, 0, 26), Color3.fromRGB(235, 110, 45), "↩ Trả lời").MouseButton1Click:Connect(function()
 	if selectedMsgTarget then setReplyMode(selectedMsgTarget) end
 	ActionSheet.Visible = false
 end)
 
+local ReactionDock = Instance.new("Frame")
+ReactionDock.Parent = ActionSheet
+ReactionDock.Position = UDim2.new(0, 6, 0, 40)
+ReactionDock.Size = UDim2.new(1, -12, 0, 38)
+ReactionDock.BackgroundColor3 = Color3.fromRGB(34, 24, 48)
+ReactionDock.BackgroundTransparency = 0.1
+ReactionDock.ZIndex = 20
+Instance.new("UICorner", ReactionDock).CornerRadius = UDim.new(1, 0)
+
 local emojis = {"❤️", "😂", "😮", "😢", "👍", "🔥"}
 for i, em in ipairs(emojis) do
-	local eb = makeSheetBtn(UDim2.new(0, 6 + (i - 1) * 32, 0, 40), UDim2.new(0, 28, 0, 26), Color3.fromRGB(32, 34, 44), em)
+	local eb = Instance.new("TextButton")
+	eb.Parent = ReactionDock
+	eb.Position = UDim2.new(0, 6 + (i - 1) * 31, 0.5, -13)
+	eb.Size = UDim2.new(0, 26, 0, 26)
+	eb.BackgroundColor3 = Color3.fromRGB(52, 36, 72)
+	eb.BackgroundTransparency = 0.2
+	eb.Font = Enum.Font.GothamBold
+	eb.Text = em
+	eb.TextColor3 = Color3.fromRGB(255, 255, 255)
 	eb.TextSize = 13
+	eb.ZIndex = 21
+	Instance.new("UICorner", eb).CornerRadius = UDim.new(1, 0)
 	eb.MouseButton1Click:Connect(function()
 		if selectedMsgTarget and selectedMsgTarget.reactLabel then
 			selectedMsgTarget.reactLabel.Text = em
@@ -773,8 +792,18 @@ for i, em in ipairs(emojis) do
 	end)
 end
 
-local CloseSheetBtn = makeSheetBtn(UDim2.new(1, -28, 0, 40), UDim2.new(0, 22, 0, 26), Color3.fromRGB(55, 58, 70), "X")
-CloseSheetBtn.MouseButton1Click:Connect(function() ActionSheet.Visible = false end)
+local closeDockBtn = Instance.new("TextButton")
+closeDockBtn.Parent = ReactionDock
+closeDockBtn.Position = UDim2.new(1, -28, 0.5, -11)
+closeDockBtn.Size = UDim2.new(0, 22, 0, 22)
+closeDockBtn.BackgroundColor3 = Color3.fromRGB(185, 55, 75)
+closeDockBtn.Font = Enum.Font.GothamBold
+closeDockBtn.Text = "X"
+closeDockBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeDockBtn.TextSize = 9
+closeDockBtn.ZIndex = 21
+Instance.new("UICorner", closeDockBtn).CornerRadius = UDim.new(1, 0)
+closeDockBtn.MouseButton1Click:Connect(function() ActionSheet.Visible = false end)
 
 local function rebuildOnlineList()
 	for _, child in ipairs(OnlineScroll:GetChildren()) do
@@ -787,23 +816,24 @@ local function rebuildOnlineList()
 		item.Parent = OnlineScroll
 		item.LayoutOrder = count
 		item.Size = UDim2.new(1, 0, 0, 34)
-		item.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		item.BackgroundTransparency = 0.72
+		item.BackgroundColor3 = Color3.fromRGB(24, 24, 34)
+		item.BackgroundTransparency = 0.25
 		item.BorderSizePixel = 0
 		item.ZIndex = 16
 		Instance.new("UICorner", item).CornerRadius = UDim.new(0, 7)
 
-		local av = Instance.new("ImageLabel")
+		local av = Instance.new("ImageButton")
 		av.Parent = item
 		av.Position = UDim2.new(0, 5, 0.5, -12)
 		av.Size = UDim2.new(0, 24, 0, 24)
 		av.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		av.BackgroundTransparency = 0.65
+		av.BackgroundTransparency = 0.5
 		av.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
 		av.ScaleType = Enum.ScaleType.Crop
 		av.ZIndex = 17
 		Instance.new("UICorner", av).CornerRadius = UDim.new(1, 0)
 		applyAvatarAsync(av, info.realName, info.userId)
+		av.MouseButton1Click:Connect(function() openUserProfile(info.realName, info.userId) end)
 
 		local editedLbl = makeCardLabel(item, UDim2.new(0, 34, 0, 3), UDim2.new(1, -40, 0, 14), Enum.Font.GothamBold, tostring(info.editedName or info.realName), Color3.fromRGB(255, 255, 255), 10.5)
 		editedLbl.ZIndex = 17
@@ -838,7 +868,7 @@ local function formatExactTime(ts)
 		if ok and type(dt) == "string" and #dt == 5 then return dt end
 	end
 	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
-	return (okNow and nowStr) or "11:49"
+	return (okNow and nowStr) or "23:30"
 end
 
 local msgOrder = 0
@@ -855,7 +885,7 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	row.Name = "MsgRow_" .. tostring(msgOrder)
 	row.Parent = MsgScroll
 	row.LayoutOrder = msgOrder
-	row.Size = UDim2.new(1, 0, 0, 44)
+	row.Size = UDim2.new(1, 0, 0, 40)
 	row.AutomaticSize = Enum.AutomaticSize.Y
 	row.BackgroundTransparency = 1
 	row.BorderSizePixel = 0
@@ -874,16 +904,10 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	applyAvatarAsync(avatarImg, safeUser, userId)
 	avatarImg.MouseButton1Click:Connect(function() openUserProfile(safeUser, userId) end)
 
-	local headerFrame = Instance.new("Frame")
-	headerFrame.Parent = row
-	headerFrame.Position = isSelf and UDim2.new(0, 4, 0, 0) or UDim2.new(0, 32, 0, 0)
-	headerFrame.Size = UDim2.new(1, -36, 0, 14)
-	headerFrame.BackgroundTransparency = 1
-	headerFrame.ZIndex = 11
-
 	local nameLbl = Instance.new("TextLabel")
-	nameLbl.Parent = headerFrame
-	nameLbl.Size = UDim2.new(1, 0, 1, 0)
+	nameLbl.Parent = row
+	nameLbl.Position = isSelf and UDim2.new(0, 4, 0, 0) or UDim2.new(0, 32, 0, 0)
+	nameLbl.Size = UDim2.new(1, -36, 0, 14)
 	nameLbl.BackgroundTransparency = 1
 	nameLbl.Font = Enum.Font.GothamBold
 	nameLbl.TextStrokeTransparency = 0.25
@@ -901,9 +925,10 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 
 	local bubble = Instance.new("TextButton")
 	bubble.Parent = row
-	bubble.Position = isSelf and UDim2.new(0, 4, 0, 15) or UDim2.new(0, 32, 0, 15)
-	bubble.Size = UDim2.new(1, -36, 0, 22)
-	bubble.AutomaticSize = Enum.AutomaticSize.Y
+	bubble.AnchorPoint = isSelf and Vector2.new(1, 0) or Vector2.new(0, 0)
+	bubble.Position = isSelf and UDim2.new(1, -32, 0, 15) or UDim2.new(0, 32, 0, 15)
+	bubble.Size = UDim2.new(0, 0, 0, 22)
+	bubble.AutomaticSize = Enum.AutomaticSize.XY
 	bubble.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	bubble.BackgroundTransparency = 0.42
 	bubble.BorderSizePixel = 0
@@ -917,13 +942,17 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	bubble.ZIndex = 11
 	Instance.new("UICorner", bubble).CornerRadius = UDim.new(0, 8)
 
+	local sizeLimit = Instance.new("UISizeConstraint", bubble)
+	sizeLimit.MaxSize = Vector2.new(165, 180)
+	sizeLimit.MinSize = Vector2.new(26, 22)
+
 	local bPad = Instance.new("UIPadding")
 	bPad.Parent = bubble
 	bPad.PaddingTop, bPad.PaddingBottom, bPad.PaddingLeft, bPad.PaddingRight = UDim.new(0, 4), UDim.new(0, 4), UDim.new(0, 7), UDim.new(0, 7)
 
 	local reactBadge = Instance.new("TextLabel")
 	reactBadge.Parent = row
-	reactBadge.Position = isSelf and UDim2.new(0, 8, 1, -12) or UDim2.new(1, -34, 1, -12)
+	reactBadge.Position = isSelf and UDim2.new(0, 6, 1, -12) or UDim2.new(1, -30, 1, -12)
 	reactBadge.Size = UDim2.new(0, 22, 0, 16)
 	reactBadge.BackgroundColor3 = Color3.fromRGB(22, 24, 34)
 	reactBadge.BackgroundTransparency = 0.25
@@ -948,7 +977,7 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	end)
 end
 
-ChatInput = Instance.new("TextBox")
+local ChatInput = Instance.new("TextBox")
 ChatInput.Parent = ChatBox
 ChatInput.Position = UDim2.new(0, 6, 1, -27)
 ChatInput.Size = UDim2.new(1, -54, 0, 22)
@@ -964,6 +993,12 @@ ChatInput.ClearTextOnFocus = false
 ChatInput.ZIndex = 11
 Instance.new("UICorner", ChatInput).CornerRadius = UDim.new(0, 6)
 
+function setReplyMode(target)
+	if not target then return end
+	ChatInput.Text = "@" .. tostring(target.user) .. " (" .. tostring(target.text) .. ") "
+	ChatInput:CaptureFocus()
+end
+
 local SendChatBtn = Instance.new("TextButton")
 SendChatBtn.Parent = ChatBox
 SendChatBtn.Position = UDim2.new(1, -44, 1, -27)
@@ -977,13 +1012,18 @@ SendChatBtn.TextSize = 10
 SendChatBtn.ZIndex = 11
 Instance.new("UICorner", SendChatBtn).CornerRadius = UDim.new(0, 6)
 
-ChatPill.MouseButton1Click:Connect(function()
-	ChatBox.Visible = not ChatBox.Visible
-	if not ChatBox.Visible then OnlinePanel.Visible, ActionSheet.Visible, ProfileModal.Visible = false, false, false end
-end)
-HideChatBtn.MouseButton1Click:Connect(function()
-	ChatBox.Visible, OnlinePanel.Visible, ActionSheet.Visible, ProfileModal.Visible = false, false, false, false
-end)
+local function openChatBox()
+	ChatBox.Visible = true
+	ChatPill.Visible = false
+end
+local function closeChatBox()
+	ChatBox.Visible = false
+	OnlinePanel.Visible, ActionSheet.Visible, ProfileModal.Visible = false, false, false
+	ChatPill.Visible = true
+end
+
+ChatPill.MouseButton1Click:Connect(openChatBox)
+HideChatBtn.MouseButton1Click:Connect(closeChatBox)
 
 local isSending = false
 local function sendCrossChat()
