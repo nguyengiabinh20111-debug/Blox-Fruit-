@@ -452,10 +452,10 @@ attachGui(ChatGui)
 local ChatPill = Instance.new("ImageButton")
 ChatPill.Name = "ChatPill"
 ChatPill.Parent = ChatGui
-ChatPill.Position = UDim2.new(0, 12, 0.76, 0)
-ChatPill.Size = UDim2.new(0, 38, 0, 38)
+ChatPill.Position = UDim2.new(0, 14, 0.72, 0)
+ChatPill.Size = UDim2.new(0, 52, 0, 52)
 ChatPill.BackgroundColor3 = Color3.fromRGB(16, 17, 24)
-ChatPill.BackgroundTransparency = 0.15
+ChatPill.BackgroundTransparency = 0.1
 ChatPill.Image = CUSTOM_ICON_ASSET
 ChatPill.ScaleType = Enum.ScaleType.Crop
 ChatPill.ZIndex = 10
@@ -486,8 +486,18 @@ ChatBg.BackgroundTransparency = 1
 ChatBg.ZIndex = 9
 Instance.new("UICorner", ChatBg).CornerRadius = UDim.new(0, 12)
 
-local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 4), UDim2.new(1, -34, 0, 18), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 13)
+local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 4), UDim2.new(0, 172, 0, 18), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 12.5)
 ChatAuthorLabel.ZIndex = 11
+
+local AuthorAfterIcon = Instance.new("ImageLabel")
+AuthorAfterIcon.Parent = ChatBox
+AuthorAfterIcon.Position = UDim2.new(0, 180, 0, 5)
+AuthorAfterIcon.Size = UDim2.new(0, 16, 0, 16)
+AuthorAfterIcon.BackgroundTransparency = 1
+AuthorAfterIcon.Image = CUSTOM_ICON_ASSET
+AuthorAfterIcon.ScaleType = Enum.ScaleType.Crop
+AuthorAfterIcon.ZIndex = 11
+Instance.new("UICorner", AuthorAfterIcon).CornerRadius = UDim.new(1, 0)
 
 local ChatDiscordSub = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 21), UDim2.new(1, -98, 0, 13), Enum.Font.GothamMedium, DISCORD_LINK, Color3.fromRGB(170, 195, 255), 8.5)
 ChatDiscordSub.ZIndex = 11
@@ -734,6 +744,13 @@ sheetStroke.Color = Color3.fromRGB(255, 130, 60)
 sheetStroke.Thickness = 1.2
 
 local selectedMsgTarget = nil
+local ChatInput
+local function setReplyMode(target)
+	if not target or not ChatInput then return end
+	ChatInput.Text = "@" .. tostring(target.user) .. " (" .. tostring(target.text) .. ") "
+	ChatInput:CaptureFocus()
+end
+
 local function makeSheetBtn(parent, pos, size, bg, text)
 	local b = Instance.new("TextButton")
 	b.Parent = parent
@@ -741,21 +758,17 @@ local function makeSheetBtn(parent, pos, size, bg, text)
 	b.Font = Enum.Font.GothamBold
 	b.Text = text
 	b.TextColor3 = Color3.fromRGB(255, 255, 255)
-	b.TextSize = 9
+	b.TextSize = 9.5
 	b.ZIndex = 20
 	Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6)
 	return b
 end
 
-makeSheetBtn(ActionSheet, UDim2.new(0, 6, 0, 6), UDim2.new(0.31, -4, 0, 26), Color3.fromRGB(45, 135, 235), "💬 Nhắn riêng").MouseButton1Click:Connect(function()
-	if selectedMsgTarget then setReplyMode(selectedMsgTarget) end
-	ActionSheet.Visible = false
-end)
-makeSheetBtn(ActionSheet, UDim2.new(0.34, 0, 0, 6), UDim2.new(0.31, -4, 0, 26), Color3.fromRGB(42, 45, 58), "📋 Chép").MouseButton1Click:Connect(function()
+makeSheetBtn(ActionSheet, UDim2.new(0, 6, 0, 6), UDim2.new(0.5, -9, 0, 26), Color3.fromRGB(42, 45, 58), "📋 Chép").MouseButton1Click:Connect(function()
 	if selectedMsgTarget and setclipboard then pcall(setclipboard, tostring(selectedMsgTarget.text or "")) end
 	ActionSheet.Visible = false
 end)
-makeSheetBtn(ActionSheet, UDim2.new(0.67, 0, 0, 6), UDim2.new(0.33, -6, 0, 26), Color3.fromRGB(235, 110, 45), "↩ Trả lời").MouseButton1Click:Connect(function()
+makeSheetBtn(ActionSheet, UDim2.new(0.5, 3, 0, 6), UDim2.new(0.5, -9, 0, 26), Color3.fromRGB(235, 110, 45), "↩ Trả lời").MouseButton1Click:Connect(function()
 	if selectedMsgTarget then setReplyMode(selectedMsgTarget) end
 	ActionSheet.Visible = false
 end)
@@ -763,17 +776,35 @@ end)
 local ReactionDock = Instance.new("Frame")
 ReactionDock.Parent = ActionSheet
 ReactionDock.Position = UDim2.new(0, 6, 0, 40)
-ReactionDock.Size = UDim2.new(1, -12, 0, 38)
+ReactionDock.Size = UDim2.new(1, -34, 0, 38)
 ReactionDock.BackgroundColor3 = Color3.fromRGB(34, 24, 48)
 ReactionDock.BackgroundTransparency = 0.1
 ReactionDock.ZIndex = 20
 Instance.new("UICorner", ReactionDock).CornerRadius = UDim.new(1, 0)
 
-local emojis = {"❤️", "😂", "😮", "😢", "👍", "🔥"}
+local EmojiScroll = Instance.new("ScrollingFrame")
+EmojiScroll.Parent = ReactionDock
+EmojiScroll.Position = UDim2.new(0, 4, 0, 2)
+EmojiScroll.Size = UDim2.new(1, -8, 1, -4)
+EmojiScroll.BackgroundTransparency = 1
+EmojiScroll.BorderSizePixel = 0
+EmojiScroll.ScrollBarThickness = 2
+EmojiScroll.ScrollingDirection = Enum.ScrollingDirection.X
+EmojiScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+EmojiScroll.AutomaticCanvasSize = Enum.AutomaticSize.X
+EmojiScroll.ZIndex = 21
+
+local EmojiLayout = Instance.new("UIListLayout")
+EmojiLayout.Parent = EmojiScroll
+EmojiLayout.FillDirection = Enum.FillDirection.Horizontal
+EmojiLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+EmojiLayout.Padding = UDim.new(0, 5)
+
+local emojis = {"❤️", "😂", "😮", "😢", "👍", "🔥", "🥰", "😭", "😡", "🎉", "💯", "✨", "🤡", "🤝"}
 for i, em in ipairs(emojis) do
 	local eb = Instance.new("TextButton")
-	eb.Parent = ReactionDock
-	eb.Position = UDim2.new(0, 6 + (i - 1) * 31, 0.5, -13)
+	eb.Parent = EmojiScroll
+	eb.LayoutOrder = i
 	eb.Size = UDim2.new(0, 26, 0, 26)
 	eb.BackgroundColor3 = Color3.fromRGB(52, 36, 72)
 	eb.BackgroundTransparency = 0.2
@@ -781,7 +812,7 @@ for i, em in ipairs(emojis) do
 	eb.Text = em
 	eb.TextColor3 = Color3.fromRGB(255, 255, 255)
 	eb.TextSize = 13
-	eb.ZIndex = 21
+	eb.ZIndex = 22
 	Instance.new("UICorner", eb).CornerRadius = UDim.new(1, 0)
 	eb.MouseButton1Click:Connect(function()
 		if selectedMsgTarget and selectedMsgTarget.reactLabel then
@@ -793,16 +824,16 @@ for i, em in ipairs(emojis) do
 end
 
 local closeDockBtn = Instance.new("TextButton")
-closeDockBtn.Parent = ReactionDock
-closeDockBtn.Position = UDim2.new(1, -28, 0.5, -11)
-closeDockBtn.Size = UDim2.new(0, 22, 0, 22)
+closeDockBtn.Parent = ActionSheet
+closeDockBtn.Position = UDim2.new(1, -26, 0, 46)
+closeDockBtn.Size = UDim2.new(0, 20, 0, 26)
 closeDockBtn.BackgroundColor3 = Color3.fromRGB(185, 55, 75)
 closeDockBtn.Font = Enum.Font.GothamBold
 closeDockBtn.Text = "X"
 closeDockBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeDockBtn.TextSize = 9
 closeDockBtn.ZIndex = 21
-Instance.new("UICorner", closeDockBtn).CornerRadius = UDim.new(1, 0)
+Instance.new("UICorner", closeDockBtn).CornerRadius = UDim.new(0, 6)
 closeDockBtn.MouseButton1Click:Connect(function() ActionSheet.Visible = false end)
 
 local function rebuildOnlineList()
@@ -868,7 +899,7 @@ local function formatExactTime(ts)
 		if ok and type(dt) == "string" and #dt == 5 then return dt end
 	end
 	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
-	return (okNow and nowStr) or "23:30"
+	return (okNow and nowStr) or "23:33"
 end
 
 local msgOrder = 0
@@ -904,10 +935,16 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	applyAvatarAsync(avatarImg, safeUser, userId)
 	avatarImg.MouseButton1Click:Connect(function() openUserProfile(safeUser, userId) end)
 
+	local headerHolder = Instance.new("Frame")
+	headerHolder.Parent = row
+	headerHolder.Position = isSelf and UDim2.new(0, 4, 0, 0) or UDim2.new(0, 32, 0, 0)
+	headerHolder.Size = UDim2.new(1, -36, 0, 14)
+	headerHolder.BackgroundTransparency = 1
+	headerHolder.ZIndex = 11
+
 	local nameLbl = Instance.new("TextLabel")
-	nameLbl.Parent = row
-	nameLbl.Position = isSelf and UDim2.new(0, 4, 0, 0) or UDim2.new(0, 32, 0, 0)
-	nameLbl.Size = UDim2.new(1, -36, 0, 14)
+	nameLbl.Parent = headerHolder
+	nameLbl.Size = UDim2.new(1, 0, 1, 0)
 	nameLbl.BackgroundTransparency = 1
 	nameLbl.Font = Enum.Font.GothamBold
 	nameLbl.TextStrokeTransparency = 0.25
@@ -916,8 +953,9 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	nameLbl.ZIndex = 11
 
 	if isAdmin then
-		nameLbl.Text = safeUser .. " [ADMIN] · " .. fixedTime
-		nameLbl.TextColor3 = Color3.fromRGB(255, 215, 70)
+		nameLbl.RichText = true
+		nameLbl.Text = '<font color="#FFD746">' .. safeUser .. '</font> <font color="#FF3737">[ADMIN]</font> · ' .. fixedTime
+		nameLbl.TextColor3 = Color3.fromRGB(220, 225, 240)
 	else
 		nameLbl.Text = safeUser .. " · " .. fixedTime
 		nameLbl.TextColor3 = customColor or (isSelf and Color3.fromRGB(255, 210, 125) or Color3.fromRGB(165, 225, 255))
@@ -977,7 +1015,7 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	end)
 end
 
-local ChatInput = Instance.new("TextBox")
+ChatInput = Instance.new("TextBox")
 ChatInput.Parent = ChatBox
 ChatInput.Position = UDim2.new(0, 6, 1, -27)
 ChatInput.Size = UDim2.new(1, -54, 0, 22)
@@ -992,12 +1030,6 @@ ChatInput.TextSize = 10.5
 ChatInput.ClearTextOnFocus = false
 ChatInput.ZIndex = 11
 Instance.new("UICorner", ChatInput).CornerRadius = UDim.new(0, 6)
-
-function setReplyMode(target)
-	if not target then return end
-	ChatInput.Text = "@" .. tostring(target.user) .. " (" .. tostring(target.text) .. ") "
-	ChatInput:CaptureFocus()
-end
 
 local SendChatBtn = Instance.new("TextButton")
 SendChatBtn.Parent = ChatBox
