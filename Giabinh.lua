@@ -1,3 +1,4 @@
+-- === PHAN 1/4 ===
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -102,6 +103,7 @@ makeLbl(ChatIntroCard, UDim2.new(0, 8, 0, 17), UDim2.new(0, 175, 0, 14), Enum.Fo
 local ChatIntroBadge = makeLbl(ChatIntroCard, UDim2.new(1, -88, 0.5, -9), UDim2.new(0, 80, 0, 18), Enum.Font.GothamBold, "💬 TÍNH NĂNG MỚI", Color3.fromRGB(255, 255, 255), 7.5, Enum.TextXAlignment.Center)
 ChatIntroBadge.BackgroundTransparency, ChatIntroBadge.BackgroundColor3 = 0.2, Color3.fromRGB(255, 105, 35)
 Instance.new("UICorner", ChatIntroBadge).CornerRadius = UDim.new(1, 0)
+-- === PHAN 2/4 ===
 makeLbl(MainFrame, UDim2.new(0, 10, 0, 166), UDim2.new(0, 90, 0, 16), Enum.Font.GothamBold, "🎮 CHỌN HUB", Color3.fromRGB(255, 210, 130), 10)
 
 local SoundBtn = Instance.new("TextButton")
@@ -266,6 +268,7 @@ OnlineScroll.BackgroundTransparency, OnlineScroll.BorderSizePixel, OnlineScroll.
 OnlineScroll.CanvasSize, OnlineScroll.AutomaticCanvasSize, OnlineScroll.ZIndex = UDim2.new(0, 0, 0, 0), Enum.AutomaticSize.Y, 15
 local OnlineLayout = Instance.new("UIListLayout")
 OnlineLayout.Parent, OnlineLayout.SortOrder, OnlineLayout.Padding = OnlineScroll, Enum.SortOrder.LayoutOrder, UDim.new(0, 4)
+-- === PHAN 3/4 ===
 local reqFunc = (syn and syn.request) or (http and http.request) or request or http_request
 local function safeDecode(raw)
 	if type(raw) ~= "string" or raw == "" then return nil end
@@ -577,8 +580,8 @@ local SendIconLayout = Instance.new("UIListLayout")
 SendIconLayout.Parent, SendIconLayout.FillDirection, SendIconLayout.VerticalAlignment, SendIconLayout.Padding = SendIconScroll, Enum.FillDirection.Horizontal, Enum.VerticalAlignment.Center, UDim.new(0, 5)
 attachHDrag(SendIconScroll, 1.25)
 
-local twentyIcons = {"😀", "😂", "🥰", "😎", "🤩", "😭", "😡", "🤯", "🥳", "👍", "❤️", "🔥", "💯", "✨", "🎉", "🤝", "🙏", "👀", "🤡", "💔"}
-l
+local twentyIcons = {"😀", "😂", "🥰", "😎", "🤩", "😭", "😡", "🤯", "🥳", "👍", "❤️", "🔥", "💯", "✨", "🎉", "🤝", "🙏",
+	-- === PHAN 4/4 ===
 local function formatLockedTime(ts)
 	local num = tonumber(ts)
 	if num and num > 0 then
@@ -587,7 +590,7 @@ local function formatLockedTime(ts)
 		if ok and type(dt) == "string" and #dt == 5 then return dt end
 	end
 	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
-	return (okNow and nowStr) or "02:08"
+	return (okNow and nowStr) or "02:14"
 end
 
 local msgOrder = 0
@@ -820,3 +823,4 @@ RunBtn.MouseButton1Click:Connect(function()
 	task.spawn(function() local f, err = loadstring(SCRIPTS[SelectedHub]) if f then f() else warn("Lỗi load script: " .. tostring(err)) end end)
 	task.wait(0.5) ScreenGui:Destroy()
 end)
+	
