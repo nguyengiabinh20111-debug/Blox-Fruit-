@@ -83,7 +83,7 @@ MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-MainFrame.Size = UDim2.new(0, 300, 0, 386)
+MainFrame.Size = UDim2.new(0, 300, 0, 398)
 MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 MainFrame.BorderSizePixel = 0
 MainFrame.ClipsDescendants = true
@@ -248,9 +248,54 @@ RateBadge.TextSize = 8
 RateBadge.ZIndex = 2
 Instance.new("UICorner", RateBadge).CornerRadius = UDim.new(1, 0)
 
+local ChatIntroCard = Instance.new("Frame")
+ChatIntroCard.Parent = MainFrame
+ChatIntroCard.Position = UDim2.new(0, 8, 0, 128)
+ChatIntroCard.Size = UDim2.new(1, -16, 0, 34)
+ChatIntroCard.BackgroundColor3 = Color3.fromRGB(32, 20, 42)
+ChatIntroCard.BackgroundTransparency = 0.35
+ChatIntroCard.ZIndex = 2
+Instance.new("UIStroke", ChatIntroCard).Color = Color3.fromRGB(255, 105, 35)
+Instance.new("UICorner", ChatIntroCard).CornerRadius = UDim.new(0, 10)
+
+local ChatIntroTitle = Instance.new("TextLabel")
+ChatIntroTitle.Parent = ChatIntroCard
+ChatIntroTitle.Position = UDim2.new(0, 8, 0, 3)
+ChatIntroTitle.Size = UDim2.new(0, 165, 0, 14)
+ChatIntroTitle.BackgroundTransparency = 1
+ChatIntroTitle.Font = Enum.Font.GothamBold
+ChatIntroTitle.Text = "🌐 CHAT TOÀN SERVER"
+ChatIntroTitle.TextColor3 = Color3.fromRGB(255, 195, 115)
+ChatIntroTitle.TextSize = 10
+ChatIntroTitle.TextXAlignment = Enum.TextXAlignment.Left
+ChatIntroTitle.ZIndex = 2
+
+local ChatIntroDesc = Instance.new("TextLabel")
+ChatIntroDesc.Parent = ChatIntroCard
+ChatIntroDesc.Position = UDim2.new(0, 8, 0, 17)
+ChatIntroDesc.Size = UDim2.new(0, 175, 0, 14)
+ChatIntroDesc.BackgroundTransparency = 1
+ChatIntroDesc.Font = Enum.Font.Gotham
+ChatIntroDesc.Text = "Chat xuyên server + avatar người chơi"
+ChatIntroDesc.TextColor3 = Color3.fromRGB(215, 205, 235)
+ChatIntroDesc.TextSize = 8
+ChatIntroDesc.TextXAlignment = Enum.TextXAlignment.Left
+ChatIntroDesc.ZIndex = 2
+
+local ChatIntroBadge = Instance.new("TextLabel")
+ChatIntroBadge.Parent = ChatIntroCard
+ChatIntroBadge.Position = UDim2.new(1, -88, 0.5, -9)
+ChatIntroBadge.Size = UDim2.new(0, 80, 0, 18)
+ChatIntroBadge.BackgroundColor3 = Color3.fromRGB(90, 42, 22)
+ChatIntroBadge.Font = Enum.Font.GothamBold
+ChatIntroBadge.Text = "💬 TÍNH NĂNG MỚI"
+ChatIntroBadge.TextColor3 = Color3.fromRGB(255, 210, 130)
+ChatIntroBadge.TextSize = 7.5
+ChatIntroBadge.ZIndex = 2
+Instance.new("UICorner", ChatIntroBadge).CornerRadius = UDim.new(1, 0)
 local Sec2Title = Instance.new("TextLabel")
 Sec2Title.Parent = MainFrame
-Sec2Title.Position = UDim2.new(0, 10, 0, 128)
+Sec2Title.Position = UDim2.new(0, 10, 0, 166)
 Sec2Title.Size = UDim2.new(0, 90, 0, 16)
 Sec2Title.BackgroundTransparency = 1
 Sec2Title.Font = Enum.Font.GothamBold
@@ -262,7 +307,7 @@ Sec2Title.ZIndex = 2
 
 local SoundBtn = Instance.new("TextButton")
 SoundBtn.Parent = MainFrame
-SoundBtn.Position = UDim2.new(1, -110, 0, 127)
+SoundBtn.Position = UDim2.new(1, -110, 0, 165)
 SoundBtn.Size = UDim2.new(0, 102, 0, 16)
 SoundBtn.BackgroundColor3 = Color3.fromRGB(32, 140, 78)
 SoundBtn.Font = Enum.Font.GothamBold
@@ -280,7 +325,7 @@ end)
 
 local HubContainer = Instance.new("Frame")
 HubContainer.Parent = MainFrame
-HubContainer.Position = UDim2.new(0, 8, 0, 148)
+HubContainer.Position = UDim2.new(0, 8, 0, 186)
 HubContainer.Size = UDim2.new(1, -16, 0, 70)
 HubContainer.BackgroundTransparency = 1
 HubContainer.ZIndex = 2
@@ -367,7 +412,7 @@ UpdateHubSelection()
 
 local FpsCard = Instance.new("Frame")
 FpsCard.Parent = MainFrame
-FpsCard.Position = UDim2.new(0, 8, 0, 224)
+FpsCard.Position = UDim2.new(0, 8, 0, 262)
 FpsCard.Size = UDim2.new(1, -16, 0, 32)
 FpsCard.BackgroundColor3 = Color3.fromRGB(20, 28, 35)
 FpsCard.BackgroundTransparency = 0.35
@@ -418,7 +463,7 @@ end)
 
 local DiscordCard = Instance.new("Frame")
 DiscordCard.Parent = MainFrame
-DiscordCard.Position = UDim2.new(0, 8, 0, 260)
+DiscordCard.Position = UDim2.new(0, 8, 0, 298)
 DiscordCard.Size = UDim2.new(1, -16, 0, 32)
 DiscordCard.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
 DiscordCard.BackgroundTransparency = 0.35
@@ -469,22 +514,9 @@ CopyBtn.MouseButton1Click:Connect(function()
 	CopyBtn.Text = "📋 SAO CHÉP"
 end)
 
-local CrossChatMenuBtn = Instance.new("TextButton")
-CrossChatMenuBtn.Parent = MainFrame
-CrossChatMenuBtn.Position = UDim2.new(0, 8, 0, 296)
-CrossChatMenuBtn.Size = UDim2.new(1, -16, 0, 24)
-CrossChatMenuBtn.BackgroundColor3 = Color3.fromRGB(35, 25, 50)
-CrossChatMenuBtn.BackgroundTransparency = 0.25
-CrossChatMenuBtn.Font = Enum.Font.GothamBold
-CrossChatMenuBtn.Text = "🌐 CHAT TOÀN SERVER (MỞ / TẮT)"
-CrossChatMenuBtn.TextColor3 = Color3.fromRGB(255, 200, 120)
-CrossChatMenuBtn.TextSize = 9.5
-CrossChatMenuBtn.ZIndex = 2
-Instance.new("UICorner", CrossChatMenuBtn).CornerRadius = UDim.new(0, 8)
-Instance.new("UIStroke", CrossChatMenuBtn).Color = Color3.fromRGB(255, 105, 35)
 local WishContainer = Instance.new("Frame")
 WishContainer.Parent = MainFrame
-WishContainer.Position = UDim2.new(0, 8, 0, 324)
+WishContainer.Position = UDim2.new(0, 8, 0, 334)
 WishContainer.Size = UDim2.new(1, -16, 0, 20)
 WishContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 WishContainer.BackgroundTransparency = 0.5
@@ -523,7 +555,7 @@ ChatGui.ResetOnSpawn = false
 local ChatPill = Instance.new("TextButton")
 ChatPill.Name = "ChatPill"
 ChatPill.Parent = ChatGui
-ChatPill.Position = UDim2.new(0, 14, 0.72, 0)
+ChatPill.Position = UDim2.new(0, 12, 0.72, 0)
 ChatPill.Size = UDim2.new(0, 96, 0, 28)
 ChatPill.BackgroundColor3 = Color3.fromRGB(20, 16, 26)
 ChatPill.BackgroundTransparency = 0.25
@@ -539,8 +571,8 @@ MakeDraggable(ChatPill)
 local ChatBox = Instance.new("Frame")
 ChatBox.Name = "ChatBox"
 ChatBox.Parent = ChatGui
-ChatBox.Position = UDim2.new(0, 14, 0.14, 0)
-ChatBox.Size = UDim2.new(0, 275, 0, 290)
+ChatBox.Position = UDim2.new(0, 10, 0.08, 0)
+ChatBox.Size = UDim2.new(0, 215, 0, 340)
 ChatBox.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
 ChatBox.BackgroundTransparency = 0.25
 ChatBox.ClipsDescendants = true
@@ -570,24 +602,36 @@ ChatDim.BackgroundTransparency = 0.72
 ChatDim.BorderSizePixel = 0
 ChatDim.ZIndex = 9
 Instance.new("UICorner", ChatDim).CornerRadius = UDim.new(0, 12)
+local ChatAuthorLabel = Instance.new("TextLabel")
+ChatAuthorLabel.Parent = ChatBox
+ChatAuthorLabel.Position = UDim2.new(0, 8, 0, 4)
+ChatAuthorLabel.Size = UDim2.new(1, -34, 0, 15)
+ChatAuthorLabel.BackgroundTransparency = 1
+ChatAuthorLabel.Font = Enum.Font.GothamBold
+ChatAuthorLabel.Text = "Tác giả: Hirose x Miyanno"
+ChatAuthorLabel.TextColor3 = Color3.fromRGB(255, 200, 125)
+ChatAuthorLabel.TextSize = 10.5
+ChatAuthorLabel.TextStrokeTransparency = 0.25
+ChatAuthorLabel.TextXAlignment = Enum.TextXAlignment.Left
+ChatAuthorLabel.ZIndex = 11
 
-local ChatHeader = Instance.new("TextLabel")
-ChatHeader.Parent = ChatBox
-ChatHeader.Position = UDim2.new(0, 10, 0, 4)
-ChatHeader.Size = UDim2.new(1, -40, 0, 22)
-ChatHeader.BackgroundTransparency = 1
-ChatHeader.Font = Enum.Font.GothamBold
-ChatHeader.Text = "🌐 CHAT XUYÊN SERVER"
-ChatHeader.TextColor3 = Color3.fromRGB(255, 200, 125)
-ChatHeader.TextSize = 11.5
-ChatHeader.TextStrokeTransparency = 0.25
-ChatHeader.TextXAlignment = Enum.TextXAlignment.Left
-ChatHeader.ZIndex = 11
+local ChatDiscordSub = Instance.new("TextLabel")
+ChatDiscordSub.Parent = ChatBox
+ChatDiscordSub.Position = UDim2.new(0, 8, 0, 18)
+ChatDiscordSub.Size = UDim2.new(1, -34, 0, 13)
+ChatDiscordSub.BackgroundTransparency = 1
+ChatDiscordSub.Font = Enum.Font.GothamMedium
+ChatDiscordSub.Text = "https://discord.gg/uqhEpzXy9q"
+ChatDiscordSub.TextColor3 = Color3.fromRGB(165, 190, 255)
+ChatDiscordSub.TextSize = 8.5
+ChatDiscordSub.TextStrokeTransparency = 0.25
+ChatDiscordSub.TextXAlignment = Enum.TextXAlignment.Left
+ChatDiscordSub.ZIndex = 11
 
 local HideChatBtn = Instance.new("TextButton")
 HideChatBtn.Parent = ChatBox
-HideChatBtn.Position = UDim2.new(1, -28, 0, 5)
-HideChatBtn.Size = UDim2.new(0, 20, 0, 20)
+HideChatBtn.Position = UDim2.new(1, -24, 0, 6)
+HideChatBtn.Size = UDim2.new(0, 18, 0, 18)
 HideChatBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 34)
 HideChatBtn.BackgroundTransparency = 0.35
 HideChatBtn.Font = Enum.Font.GothamBold
@@ -599,8 +643,8 @@ Instance.new("UICorner", HideChatBtn).CornerRadius = UDim.new(0, 5)
 
 local MsgScroll = Instance.new("ScrollingFrame")
 MsgScroll.Parent = ChatBox
-MsgScroll.Position = UDim2.new(0, 6, 0, 28)
-MsgScroll.Size = UDim2.new(1, -12, 1, -64)
+MsgScroll.Position = UDim2.new(0, 6, 0, 34)
+MsgScroll.Size = UDim2.new(1, -12, 1, -66)
 MsgScroll.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 MsgScroll.BackgroundTransparency = 0.78
 MsgScroll.BorderSizePixel = 0
@@ -678,11 +722,14 @@ end
 local msgOrder = 0
 local function appendChatLine(username, text, userId, color)
 	msgOrder += 1
+	local safeUser = tostring(username or "Player")
+	local safeText = tostring(text or "")
+
 	local row = Instance.new("Frame")
 	row.Name = "MsgRow_" .. tostring(msgOrder)
 	row.Parent = MsgScroll
 	row.LayoutOrder = msgOrder
-	row.Size = UDim2.new(1, 0, 0, 0)
+	row.Size = UDim2.new(1, 0, 0, 42)
 	row.AutomaticSize = Enum.AutomaticSize.Y
 	row.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	row.BackgroundTransparency = 0.72
@@ -692,46 +739,58 @@ local function appendChatLine(username, text, userId, color)
 
 	local avatarImg = Instance.new("ImageLabel")
 	avatarImg.Parent = row
-	avatarImg.Position = UDim2.new(0, 5, 0, 5)
-	avatarImg.Size = UDim2.new(0, 28, 0, 28)
+	avatarImg.Position = UDim2.new(0, 5, 0, 6)
+	avatarImg.Size = UDim2.new(0, 26, 0, 26)
 	avatarImg.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
-	avatarImg.BackgroundTransparency = 0.5
+	avatarImg.BackgroundTransparency = 0.45
 	avatarImg.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
 	avatarImg.ScaleType = Enum.ScaleType.Crop
 	avatarImg.ZIndex = 11
 	Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
-	applyAvatarAsync(avatarImg, username, userId)
+	applyAvatarAsync(avatarImg, safeUser, userId)
 
-	local line = Instance.new("TextLabel")
-	line.Parent = row
-	line.Position = UDim2.new(0, 38, 0, 3)
-	line.Size = UDim2.new(1, -44, 0, 0)
-	line.AutomaticSize = Enum.AutomaticSize.Y
-	line.BackgroundTransparency = 1
-	line.RichText = true
-	line.Font = Enum.Font.GothamMedium
-	local safeUser = tostring(username or "Player")
-	local safeText = tostring(text or "")
-	line.Text = '<font size="13.5"><b>' .. safeUser .. '</b></font>\n<font size="12">' .. safeText .. "</font>"
-	line.TextColor3 = color or Color3.fromRGB(255, 255, 255)
-	line.TextStrokeTransparency = 0.25
-	line.TextSize = 12
-	line.TextWrapped = true
-	line.TextXAlignment = Enum.TextXAlignment.Left
-	line.ZIndex = 11
+	local nameLabel = Instance.new("TextLabel")
+	nameLabel.Parent = row
+	nameLabel.Position = UDim2.new(0, 35, 0, 3)
+	nameLabel.Size = UDim2.new(1, -40, 0, 15)
+	nameLabel.BackgroundTransparency = 1
+	nameLabel.Font = Enum.Font.GothamBold
+	nameLabel.Text = safeUser
+	nameLabel.TextColor3 = color or Color3.fromRGB(255, 210, 130)
+	nameLabel.TextStrokeTransparency = 0.25
+	nameLabel.TextSize = 12
+	nameLabel.TextWrapped = true
+	nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+	nameLabel.ZIndex = 11
+
+	local bodyLabel = Instance.new("TextLabel")
+	bodyLabel.Parent = row
+	bodyLabel.Position = UDim2.new(0, 35, 0, 18)
+	bodyLabel.Size = UDim2.new(1, -40, 0, 16)
+	bodyLabel.AutomaticSize = Enum.AutomaticSize.Y
+	bodyLabel.BackgroundTransparency = 1
+	bodyLabel.Font = Enum.Font.GothamMedium
+	bodyLabel.Text = safeText
+	bodyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	bodyLabel.TextStrokeTransparency = 0.25
+	bodyLabel.TextSize = 11.5
+	bodyLabel.TextWrapped = true
+	bodyLabel.TextXAlignment = Enum.TextXAlignment.Left
+	bodyLabel.ZIndex = 11
 
 	local rowPad = Instance.new("UIPadding")
 	rowPad.Parent = row
-	rowPad.PaddingBottom = UDim.new(0, 4)
+	rowPad.PaddingBottom = UDim.new(0, 5)
 
 	task.defer(function()
 		MsgScroll.CanvasPosition = Vector2.new(0, math.max(0, MsgScroll.AbsoluteCanvasSize.Y - MsgScroll.AbsoluteWindowSize.Y))
 	end)
 end
+
 local ChatInput = Instance.new("TextBox")
 ChatInput.Parent = ChatBox
-ChatInput.Position = UDim2.new(0, 6, 1, -29)
-ChatInput.Size = UDim2.new(1, -60, 0, 24)
+ChatInput.Position = UDim2.new(0, 6, 1, -27)
+ChatInput.Size = UDim2.new(1, -54, 0, 22)
 ChatInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 ChatInput.BackgroundTransparency = 0.68
 ChatInput.Font = Enum.Font.Gotham
@@ -739,21 +798,21 @@ ChatInput.PlaceholderText = "Nhập tin nhắn..."
 ChatInput.PlaceholderColor3 = Color3.fromRGB(185, 190, 205)
 ChatInput.Text = ""
 ChatInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-ChatInput.TextSize = 11
+ChatInput.TextSize = 10.5
 ChatInput.ClearTextOnFocus = false
 ChatInput.ZIndex = 11
 Instance.new("UICorner", ChatInput).CornerRadius = UDim.new(0, 6)
 
 local SendChatBtn = Instance.new("TextButton")
 SendChatBtn.Parent = ChatBox
-SendChatBtn.Position = UDim2.new(1, -50, 1, -29)
-SendChatBtn.Size = UDim2.new(0, 44, 0, 24)
+SendChatBtn.Position = UDim2.new(1, -44, 1, -27)
+SendChatBtn.Size = UDim2.new(0, 38, 0, 22)
 SendChatBtn.BackgroundColor3 = Color3.fromRGB(255, 105, 35)
 SendChatBtn.BackgroundTransparency = 0.15
 SendChatBtn.Font = Enum.Font.GothamBold
 SendChatBtn.Text = "GỬI"
 SendChatBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-SendChatBtn.TextSize = 10.5
+SendChatBtn.TextSize = 10
 SendChatBtn.ZIndex = 11
 Instance.new("UICorner", SendChatBtn).CornerRadius = UDim.new(0, 6)
 
@@ -761,7 +820,6 @@ local function toggleChatBox()
 	ChatBox.Visible = not ChatBox.Visible
 end
 
-CrossChatMenuBtn.MouseButton1Click:Connect(toggleChatBox)
 ChatPill.MouseButton1Click:Connect(toggleChatBox)
 HideChatBtn.MouseButton1Click:Connect(function() ChatBox.Visible = false end)
 
@@ -809,7 +867,7 @@ task.spawn(function()
 					local mid = tonumber(m.id) or 0
 					if mid > lastMsgId then
 						lastMsgId = mid
-						appendChatLine(tostring(m.user or "Player"), tostring(m.text or ""), m.userId, Color3.fromRGB(255, 255, 255))
+						appendChatLine(tostring(m.user or "Player"), tostring(m.text or ""), m.userId, Color3.fromRGB(255, 210, 130))
 					end
 				end
 			end
@@ -820,7 +878,7 @@ end)
 
 local RunBtn = Instance.new("TextButton")
 RunBtn.Parent = MainFrame
-RunBtn.Position = UDim2.new(0, 8, 0, 350)
+RunBtn.Position = UDim2.new(0, 8, 0, 360)
 RunBtn.Size = UDim2.new(1, -16, 0, 24)
 RunBtn.BackgroundColor3 = Color3.fromRGB(255, 105, 35)
 RunBtn.Font = Enum.Font.GothamBold
