@@ -486,25 +486,25 @@ ChatBg.BackgroundTransparency = 1
 ChatBg.ZIndex = 9
 Instance.new("UICorner", ChatBg).CornerRadius = UDim.new(0, 12)
 
-local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 4), UDim2.new(0, 172, 0, 18), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 12.5)
+local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 4), UDim2.new(0, 166, 0, 20), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 12)
 ChatAuthorLabel.ZIndex = 11
 
 local AuthorAfterIcon = Instance.new("ImageLabel")
 AuthorAfterIcon.Parent = ChatBox
-AuthorAfterIcon.Position = UDim2.new(0, 180, 0, 5)
-AuthorAfterIcon.Size = UDim2.new(0, 16, 0, 16)
+AuthorAfterIcon.Position = UDim2.new(0, 175, 0, 2)
+AuthorAfterIcon.Size = UDim2.new(0, 24, 0, 24)
 AuthorAfterIcon.BackgroundTransparency = 1
 AuthorAfterIcon.Image = CUSTOM_ICON_ASSET
 AuthorAfterIcon.ScaleType = Enum.ScaleType.Crop
 AuthorAfterIcon.ZIndex = 11
 Instance.new("UICorner", AuthorAfterIcon).CornerRadius = UDim.new(1, 0)
 
-local ChatDiscordSub = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 21), UDim2.new(1, -98, 0, 13), Enum.Font.GothamMedium, DISCORD_LINK, Color3.fromRGB(170, 195, 255), 8.5)
+local ChatDiscordSub = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 24), UDim2.new(1, -98, 0, 13), Enum.Font.GothamMedium, DISCORD_LINK, Color3.fromRGB(170, 195, 255), 8.5)
 ChatDiscordSub.ZIndex = 11
 
 local OnlineToggleBtn = Instance.new("TextButton")
 OnlineToggleBtn.Parent = ChatBox
-OnlineToggleBtn.Position = UDim2.new(1, -92, 0, 20)
+OnlineToggleBtn.Position = UDim2.new(1, -92, 0, 23)
 OnlineToggleBtn.Size = UDim2.new(0, 64, 0, 14)
 OnlineToggleBtn.BackgroundColor3 = Color3.fromRGB(16, 48, 32)
 OnlineToggleBtn.BackgroundTransparency = 0.35
@@ -530,8 +530,8 @@ Instance.new("UICorner", HideChatBtn).CornerRadius = UDim.new(0, 5)
 
 local MsgScroll = Instance.new("ScrollingFrame")
 MsgScroll.Parent = ChatBox
-MsgScroll.Position = UDim2.new(0, 6, 0, 37)
-MsgScroll.Size = UDim2.new(1, -12, 1, -71)
+MsgScroll.Position = UDim2.new(0, 6, 0, 40)
+MsgScroll.Size = UDim2.new(1, -12, 1, -74)
 MsgScroll.BackgroundTransparency = 1
 MsgScroll.BorderSizePixel = 0
 MsgScroll.ScrollBarThickness = 3
@@ -550,8 +550,8 @@ MsgPad.PaddingTop, MsgPad.PaddingBottom, MsgPad.PaddingLeft, MsgPad.PaddingRight
 
 local OnlinePanel = Instance.new("Frame")
 OnlinePanel.Parent = ChatBox
-OnlinePanel.Position = UDim2.new(0, 6, 0, 37)
-OnlinePanel.Size = UDim2.new(1, -12, 1, -43)
+OnlinePanel.Position = UDim2.new(0, 6, 0, 40)
+OnlinePanel.Size = UDim2.new(1, -12, 1, -46)
 OnlinePanel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 OnlinePanel.BackgroundTransparency = 0.14
 OnlinePanel.BorderSizePixel = 0
@@ -891,7 +891,7 @@ end
 
 OnlineToggleBtn.MouseButton1Click:Connect(function() rebuildOnlineList() OnlinePanel.Visible = not OnlinePanel.Visible end)
 BackFromOnlineBtn.MouseButton1Click:Connect(function() OnlinePanel.Visible = false end)
-local function formatExactTime(ts)
+local function formatLockedTime(ts)
 	local num = tonumber(ts)
 	if num and num > 0 then
 		if num > 1e11 then num = math.floor(num / 1000) end
@@ -899,7 +899,7 @@ local function formatExactTime(ts)
 		if ok and type(dt) == "string" and #dt == 5 then return dt end
 	end
 	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
-	return (okNow and nowStr) or "23:33"
+	return (okNow and nowStr) or "23:40"
 end
 
 local msgOrder = 0
@@ -910,13 +910,13 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	local myName = (LocalPlayer and LocalPlayer.Name) or ""
 	local isSelf = (myName ~= "" and safeUser == myName)
 	local isAdmin = (safeUser == ADMIN_ROBLOX_USERNAME)
-	local fixedTime = formatExactTime(timestamp)
+	local lockedTime = formatLockedTime(timestamp)
 
 	local row = Instance.new("Frame")
 	row.Name = "MsgRow_" .. tostring(msgOrder)
 	row.Parent = MsgScroll
 	row.LayoutOrder = msgOrder
-	row.Size = UDim2.new(1, 0, 0, 40)
+	row.Size = UDim2.new(1, 0, 0, 42)
 	row.AutomaticSize = Enum.AutomaticSize.Y
 	row.BackgroundTransparency = 1
 	row.BorderSizePixel = 0
@@ -935,16 +935,10 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	applyAvatarAsync(avatarImg, safeUser, userId)
 	avatarImg.MouseButton1Click:Connect(function() openUserProfile(safeUser, userId) end)
 
-	local headerHolder = Instance.new("Frame")
-	headerHolder.Parent = row
-	headerHolder.Position = isSelf and UDim2.new(0, 4, 0, 0) or UDim2.new(0, 32, 0, 0)
-	headerHolder.Size = UDim2.new(1, -36, 0, 14)
-	headerHolder.BackgroundTransparency = 1
-	headerHolder.ZIndex = 11
-
 	local nameLbl = Instance.new("TextLabel")
-	nameLbl.Parent = headerHolder
-	nameLbl.Size = UDim2.new(1, 0, 1, 0)
+	nameLbl.Parent = row
+	nameLbl.Position = isSelf and UDim2.new(0, 4, 0, 0) or UDim2.new(0, 32, 0, 0)
+	nameLbl.Size = UDim2.new(1, -36, 0, 14)
 	nameLbl.BackgroundTransparency = 1
 	nameLbl.Font = Enum.Font.GothamBold
 	nameLbl.TextStrokeTransparency = 0.25
@@ -954,17 +948,31 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 
 	if isAdmin then
 		nameLbl.RichText = true
-		nameLbl.Text = '<font color="#FFD746">' .. safeUser .. '</font> <font color="#FF3737">[ADMIN]</font> · ' .. fixedTime
+		nameLbl.Text = '<font color="#FFD746">' .. safeUser .. '</font> <font color="#FF3737">[ADMIN]</font> · ' .. lockedTime
 		nameLbl.TextColor3 = Color3.fromRGB(220, 225, 240)
 	else
-		nameLbl.Text = safeUser .. " · " .. fixedTime
+		nameLbl.Text = safeUser .. " · " .. lockedTime
 		nameLbl.TextColor3 = customColor or (isSelf and Color3.fromRGB(255, 210, 125) or Color3.fromRGB(165, 225, 255))
 	end
 
+	local msgStack = Instance.new("Frame")
+	msgStack.Parent = row
+	msgStack.AnchorPoint = isSelf and Vector2.new(1, 0) or Vector2.new(0, 0)
+	msgStack.Position = isSelf and UDim2.new(1, -32, 0, 15) or UDim2.new(0, 32, 0, 15)
+	msgStack.Size = UDim2.new(0, 0, 0, 0)
+	msgStack.AutomaticSize = Enum.AutomaticSize.XY
+	msgStack.BackgroundTransparency = 1
+	msgStack.ZIndex = 11
+
+	local stackLayout = Instance.new("UIListLayout")
+	stackLayout.Parent = msgStack
+	stackLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	stackLayout.HorizontalAlignment = isSelf and Enum.HorizontalAlignment.Right or Enum.HorizontalAlignment.Left
+	stackLayout.Padding = UDim.new(0, 3)
+
 	local bubble = Instance.new("TextButton")
-	bubble.Parent = row
-	bubble.AnchorPoint = isSelf and Vector2.new(1, 0) or Vector2.new(0, 0)
-	bubble.Position = isSelf and UDim2.new(1, -32, 0, 15) or UDim2.new(0, 32, 0, 15)
+	bubble.Parent = msgStack
+	bubble.LayoutOrder = 1
 	bubble.Size = UDim2.new(0, 0, 0, 22)
 	bubble.AutomaticSize = Enum.AutomaticSize.XY
 	bubble.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -989,11 +997,11 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	bPad.PaddingTop, bPad.PaddingBottom, bPad.PaddingLeft, bPad.PaddingRight = UDim.new(0, 4), UDim.new(0, 4), UDim.new(0, 7), UDim.new(0, 7)
 
 	local reactBadge = Instance.new("TextLabel")
-	reactBadge.Parent = row
-	reactBadge.Position = isSelf and UDim2.new(0, 6, 1, -12) or UDim2.new(1, -30, 1, -12)
-	reactBadge.Size = UDim2.new(0, 22, 0, 16)
-	reactBadge.BackgroundColor3 = Color3.fromRGB(22, 24, 34)
-	reactBadge.BackgroundTransparency = 0.25
+	reactBadge.Parent = msgStack
+	reactBadge.LayoutOrder = 2
+	reactBadge.Size = UDim2.new(0, 24, 0, 16)
+	reactBadge.BackgroundColor3 = Color3.fromRGB(16, 17, 24)
+	reactBadge.BackgroundTransparency = 0.2
 	reactBadge.Font = Enum.Font.GothamBold
 	reactBadge.Text = ""
 	reactBadge.TextSize = 11
@@ -1003,7 +1011,7 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 
 	local rPad = Instance.new("UIPadding")
 	rPad.Parent = row
-	rPad.PaddingBottom = UDim.new(0, 6)
+	rPad.PaddingBottom = UDim.new(0, 4)
 
 	bubble.MouseButton1Click:Connect(function()
 		selectedMsgTarget = { user = safeUser, text = safeText, reactLabel = reactBadge }
@@ -1020,10 +1028,10 @@ ChatInput.Parent = ChatBox
 ChatInput.Position = UDim2.new(0, 6, 1, -27)
 ChatInput.Size = UDim2.new(1, -54, 0, 22)
 ChatInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-ChatInput.BackgroundTransparency = 0.72
+ChatInput.BackgroundTransparency = 0.22
 ChatInput.Font = Enum.Font.Gotham
 ChatInput.PlaceholderText = "Nhập tin nhắn..."
-ChatInput.PlaceholderColor3 = Color3.fromRGB(205, 210, 225)
+ChatInput.PlaceholderColor3 = Color3.fromRGB(220, 225, 240)
 ChatInput.Text = ""
 ChatInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 ChatInput.TextSize = 10.5
@@ -1036,7 +1044,7 @@ SendChatBtn.Parent = ChatBox
 SendChatBtn.Position = UDim2.new(1, -44, 1, -27)
 SendChatBtn.Size = UDim2.new(0, 38, 0, 22)
 SendChatBtn.BackgroundColor3 = Color3.fromRGB(255, 105, 35)
-SendChatBtn.BackgroundTransparency = 0.15
+SendChatBtn.BackgroundTransparency = 0.12
 SendChatBtn.Font = Enum.Font.GothamBold
 SendChatBtn.Text = "GỬI"
 SendChatBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1091,6 +1099,21 @@ SendChatBtn.MouseButton1Click:Connect(sendCrossChat)
 ChatInput.FocusLost:Connect(function(enterPressed) if enterPressed then sendCrossChat() end end)
 
 local lastMsgId = 0
+local clearCycleSignal = 0
+
+task.spawn(function()
+	while ChatGui and ChatGui.Parent do
+		task.wait(60)
+		clearCycleSignal += 1
+		for _, child in ipairs(MsgScroll:GetChildren()) do
+			if child:IsA("Frame") then
+				child:Destroy()
+			end
+		end
+		MsgScroll.CanvasPosition = Vector2.new(0, 0)
+	end
+end)
+
 task.spawn(function()
 	if not reqFunc then return end
 	local myUser = (LocalPlayer and LocalPlayer.Name) or "Player"
@@ -1135,6 +1158,7 @@ task.spawn(function()
 	end)
 
 	while true do
+		local seenClearAtStart = clearCycleSignal
 		local url = CHAT_API_URL .. "/messages" .. (lastMsgId > 0 and ("?after=" .. tostring(lastMsgId)) or "")
 		local ok, res = pcall(function() return reqFunc({ Url = url, Method = "GET" }) end)
 		if ok and res and (res.StatusCode == 200 or res.Success) then
@@ -1146,7 +1170,9 @@ task.spawn(function()
 						local mid = tonumber(m.id) or 0
 						if mid > lastMsgId then
 							lastMsgId = mid
-							appendChatLine(tostring(m.user or "Player"), tostring(m.text or ""), m.userId, m.time or m.timestamp or m.createdAt)
+							if seenClearAtStart == clearCycleSignal then
+								appendChatLine(tostring(m.user or "Player"), tostring(m.text or ""), m.userId, m.time or m.timestamp or m.createdAt)
+							end
 						end
 					end
 				end
