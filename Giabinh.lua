@@ -73,11 +73,20 @@ local function MakeDraggable(guiObj)
 	end)
 end
 
+local function attachGui(gui)
+	local ok = pcall(function() gui.Parent = CoreGui end)
+	if not ok or not gui.Parent then
+		if LocalPlayer and LocalPlayer:FindFirstChildOfClass("PlayerGui") then
+			gui.Parent = LocalPlayer:FindFirstChildOfClass("PlayerGui")
+		end
+	end
+end
+
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "HiroseHubLoader"
-ScreenGui.Parent = CoreGui
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.ResetOnSpawn = false
+attachGui(ScreenGui)
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
@@ -559,9 +568,9 @@ end
 
 local ChatGui = Instance.new("ScreenGui")
 ChatGui.Name = "HiroseCrossChatGui"
-ChatGui.Parent = CoreGui
 ChatGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ChatGui.ResetOnSpawn = false
+attachGui(ChatGui)
 
 local ChatPill = Instance.new("TextButton")
 ChatPill.Name = "ChatPill"
@@ -660,29 +669,104 @@ HideChatBtn.Size = UDim2.new(0, 18, 0, 18)
 HideChatBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 HideChatBtn.BackgroundTransparency = 0.55
 HideChatBtn.Font = Enum.Font.GothamBold
-HideChatBtn.Text
-local avatarCache = {}
-local userIdCache = {}
-local activeScriptUsers = {}
+HideChatBtn.Text = "−"
+HideChatBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+HideChatBtn.TextSize = 12
+HideChatBtn.ZIndex = 11
+Instance.new("UICorner", HideChatBtn).CornerRadius = UDim.new(0, 5)
+
+local MsgScroll = Instance.new("ScrollingFrame")
+MsgScroll.Parent = ChatBox
+MsgScroll.Position = UDim2.new(0, 6, 0, 37)
+MsgScroll.Size = UDim2.new(1, -12, 1, -71)
+MsgScroll.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MsgScroll.BackgroundTransparency = 0.88
+MsgScroll.BorderSizePixel = 0
+MsgScroll.ScrollBarThickness = 3
+MsgScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+MsgScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+MsgScroll.ZIndex = 10
+Instance.new("UICorner", MsgScroll).CornerRadius = UDim.new(0, 8)
+
+local MsgLayout = Instance.new("UIListLayout")
+MsgLayout.Parent = MsgScroll
+MsgLayout.SortOrder = Enum.SortOrder.LayoutOrder
+MsgLayout.Padding = UDim.new(0, 5)
+
+local MsgPad = Instance.new("UIPadding")
+MsgPad.Parent = MsgScroll
+MsgPad.PaddingTop = UDim.new(0, 5)
+MsgPad.PaddingBottom = UDim.new(0, 5)
+MsgPad.PaddingLeft = UDim.new(0, 5)
+MsgPad.PaddingRight = UDim.new(0, 5)
+
+local OnlinePanel = Instance.new("Frame")
+OnlinePanel.Name = "OnlinePanel"
+OnlinePanel.Parent = ChatBox
+OnlinePanel.Position = UDim2.new(0, 6, 0, 37)
+OnlinePanel.Size = UDim2.new(1, -12, 1, -43)
+OnlinePanel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+OnlinePanel.BackgroundTransparency = 0.75
+OnlinePanel.BorderSizePixel = 0
+OnlinePanel.Visible = false
+OnlinePanel.ZIndex = 13
+Instance.new("UICorner", OnlinePanel).CornerRadius = UDim.new(0, 8)
+
+local BackFromOnlineBtn = Instance.new("TextButton")
+BackFromOnlineBtn.Parent = OnlinePanel
+BackFromOnlineBtn.Position = UDim2.new(0, 6, 0, 4)
+BackFromOnlineBtn.Size = UDim2.new(0, 62, 0, 18)
+BackFromOnlineBtn.BackgroundColor3 = Color3.fromRGB(255, 105, 35)
+BackFromOnlineBtn.BackgroundTransparency = 0.2
+BackFromOnlineBtn.Font = Enum.Font.GothamBold
+BackFromOnlineBtn.Text = "< Quay lại"
+BackFromOnlineBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+BackFromOnlineBtn.TextSize = 8.5
+BackFromOnlineBtn.ZIndex = 14
+Instance.new("UICorner", BackFromOnlineBtn).CornerRadius = UDim.new(0, 6)
+
+local OnlineListTitle = Instance.new("TextLabel")
+OnlineListTitle.Parent = OnlinePanel
+OnlineListTitle.Position = UDim2.new(0, 74, 0, 4)
+OnlineListTitle.Size = UDim2.new(1, -80, 0, 18)
+OnlineListTitle.BackgroundTransparency = 1
+OnlineListTitle.Font = Enum.Font.GothamBold
+OnlineListTitle.Text = "Đang bật script · 1"
+OnlineListTitle.TextColor3 = Color3.fromRGB(115, 255, 175)
+OnlineListTitle.TextStrokeTransparency = 0.25
+OnlineListTitle.TextSize = 9.5
+OnlineListTitle.TextXAlignment = Enum.TextXAlignment.Right
+OnlineListTitle.ZIndex = 14
+
+local OnlineScroll = Instance.new("ScrollingFrame")
+OnlineScroll.Parent = OnlinePanel
+OnlineScroll.Position = UDim2.new(0, 5, 0, 26)
+OnlineScroll.Size = UDim2.new(1, -10, 1, -30)
+OnlineScroll.BackgroundTransparency = 1
+OnlineScroll.BorderSizePixel = 0
+OnlineScroll.ScrollBarThickness = 3
+OnlineScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+OnlineScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+OnlineScroll.ZIndex = 14
+
+local OnlineLayout = Instance.new("UIListLayout")
+OnlineLayout.Parent = OnlineScroll
+OnlineLayout.SortOrder = Enum.SortOrder.LayoutOrder
+OnlineLayout.Padding = UDim.new(0, 4)
+local avatarCache, userIdCache, activeScriptUsers = {}, {}, {}
 
 local function resolveUserId(username, userId)
 	local idNum = tonumber(userId)
 	if idNum and idNum > 0 then return idNum end
 	local uname = tostring(username or "")
-	if uname == "" or uname == "Player" or uname == "Hệ thống" or uname == "Hirose x Miyanno" then
-		return nil
-	end
+	if uname == "" or uname == "Player" or uname == "Hệ thống" or uname == "Hirose x Miyanno" then return nil end
 	if userIdCache[uname] then return userIdCache[uname] end
 	local plr = Players:FindFirstChild(uname)
-	if plr and plr.UserId > 0 then
-		userIdCache[uname] = plr.UserId
-		return plr.UserId
-	end
+	if plr and plr.UserId > 0 then userIdCache[uname] = plr.UserId return plr.UserId end
 	local ok, fetchedId = pcall(function() return Players:GetUserIdFromNameAsync(uname) end)
 	if ok and tonumber(fetchedId) and tonumber(fetchedId) > 0 then
-		local num = tonumber(fetchedId)
-		userIdCache[uname] = num
-		return num
+		userIdCache[uname] = tonumber(fetchedId)
+		return tonumber(fetchedId)
 	end
 	return nil
 end
@@ -767,30 +851,18 @@ end
 
 local function registerScriptUser(realName, editedName, userId)
 	local rName = tostring(realName or "")
-	if rName == "" or rName == "Player" or rName == "Hệ thống" or rName == "Hirose x Miyanno" then
-		return
-	end
+	if rName == "" or rName == "Player" or rName == "Hệ thống" or rName == "Hirose x Miyanno" then return end
 	local eName = tostring(editedName or "")
 	if eName == "" then
 		local plr = Players:FindFirstChild(rName)
 		eName = (plr and plr.DisplayName) or rName
 	end
-	activeScriptUsers[rName] = {
-		realName = rName,
-		editedName = eName,
-		userId = tonumber(userId) or 0
-	}
+	activeScriptUsers[rName] = { realName = rName, editedName = eName, userId = tonumber(userId) or 0 }
 	rebuildOnlineList()
 end
 
-OnlineToggleBtn.MouseButton1Click:Connect(function()
-	rebuildOnlineList()
-	OnlinePanel.Visible = not OnlinePanel.Visible
-end)
-
-BackFromOnlineBtn.MouseButton1Click:Connect(function()
-	OnlinePanel.Visible = false
-end)
+OnlineToggleBtn.MouseButton1Click:Connect(function() rebuildOnlineList() OnlinePanel.Visible = not OnlinePanel.Visible end)
+BackFromOnlineBtn.MouseButton1Click:Connect(function() OnlinePanel.Visible = false end)
 
 local function formatTimeShort(ts)
 	local num = tonumber(ts)
@@ -803,18 +875,14 @@ local function formatTimeShort(ts)
 	return (okNow and nowStr) or "22:48"
 end
 
-local function isVerifiedAdmin(rawUsername)
-	return tostring(rawUsername or "") == ADMIN_ROBLOX_USERNAME
-end
-
 local msgOrder = 0
-local function appendChatLine(username, text, userId, timestamp, customColor, editedName)
+local function appendChatLine(username, text, userId, timestamp, customColor)
 	msgOrder += 1
 	local safeUser = tostring(username or "Player")
 	local safeText = tostring(text or "")
 	local myName = (LocalPlayer and LocalPlayer.Name) or ""
 	local isSelf = (myName ~= "" and safeUser == myName)
-	local isAdmin = isVerifiedAdmin(safeUser)
+	local isAdmin = (safeUser == ADMIN_ROBLOX_USERNAME)
 	local timeStr = formatTimeShort(timestamp)
 
 	local row = Instance.new("Frame")
@@ -841,14 +909,13 @@ local function appendChatLine(username, text, userId, timestamp, customColor, ed
 	Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
 	applyAvatarAsync(avatarImg, safeUser, userId)
 
-	local headerText = safeUser .. (isAdmin and " [ADMIN]" or "") .. " · " .. timeStr
 	local nameLabel = Instance.new("TextLabel")
 	nameLabel.Parent = row
 	nameLabel.Position = isSelf and UDim2.new(0, 6, 0, 3) or UDim2.new(0, 35, 0, 3)
 	nameLabel.Size = UDim2.new(1, -41, 0, 14)
 	nameLabel.BackgroundTransparency = 1
 	nameLabel.Font = Enum.Font.GothamBold
-	nameLabel.Text = headerText
+	nameLabel.Text = safeUser .. (isAdmin and " [ADMIN]" or "") .. " · " .. timeStr
 	nameLabel.TextColor3 = customColor or (isAdmin and Color3.fromRGB(255, 95, 95) or (isSelf and Color3.fromRGB(255, 210, 125) or Color3.fromRGB(165, 225, 255)))
 	nameLabel.TextStrokeTransparency = 0.25
 	nameLabel.TextSize = 10.5
@@ -909,16 +976,8 @@ SendChatBtn.TextSize = 10
 SendChatBtn.ZIndex = 11
 Instance.new("UICorner", SendChatBtn).CornerRadius = UDim.new(0, 6)
 
-local function toggleChatBox()
-	ChatBox.Visible = not ChatBox.Visible
-	if not ChatBox.Visible then OnlinePanel.Visible = false end
-end
-
-ChatPill.MouseButton1Click:Connect(toggleChatBox)
-HideChatBtn.MouseButton1Click:Connect(function()
-	ChatBox.Visible = false
-	OnlinePanel.Visible = false
-end)
+ChatPill.MouseButton1Click:Connect(function() ChatBox.Visible = not ChatBox.Visible if not ChatBox.Visible then OnlinePanel.Visible = false end end)
+HideChatBtn.MouseButton1Click:Connect(function() ChatBox.Visible = false OnlinePanel.Visible = false end)
 
 local isSending = false
 local function sendCrossChat()
@@ -962,14 +1021,12 @@ task.spawn(function()
 
 	local function syncActiveUsers(listData)
 		if type(listData) ~= "table" then return end
-		local fresh = {}
-		fresh[myUser] = { realName = myUser, editedName = myDisplay, userId = myId }
+		local fresh = { [myUser] = { realName = myUser, editedName = myDisplay, userId = myId } }
 		for _, u in ipairs(listData) do
 			if type(u) == "table" then
 				local rName = tostring(u.user or u.username or u.realName or "")
 				if rName ~= "" and rName ~= "Player" then
-					local eName = tostring(u.displayName or u.editedName or u.nick or rName)
-					fresh[rName] = { realName = rName, editedName = eName, userId = tonumber(u.userId) or 0 }
+					fresh[rName] = { realName = rName, editedName = tostring(u.displayName or u.editedName or u.nick or rName), userId = tonumber(u.userId) or 0 }
 				end
 			elseif type(u) == "string" and u ~= "" then
 				fresh[u] = { realName = u, editedName = u, userId = 0 }
@@ -991,11 +1048,7 @@ task.spawn(function()
 				if r and r.Body then
 					local pData = safeDecode(r.Body)
 					if type(pData) == "table" then
-						if type(pData.users) == "table" then
-							syncActiveUsers(pData.users)
-						elseif type(pData.activeUsers) == "table" then
-							syncActiveUsers(pData.activeUsers)
-						end
+						syncActiveUsers(pData.users or pData.activeUsers)
 					end
 				end
 			end)
@@ -1009,19 +1062,13 @@ task.spawn(function()
 		if ok and res and (res.StatusCode == 200 or res.Success) then
 			local data = safeDecode(res.Body)
 			if type(data) == "table" and data.ok then
-				if type(data.users) == "table" then
-					syncActiveUsers(data.users)
-				elseif type(data.activeUsers) == "table" then
-					syncActiveUsers(data.activeUsers)
-				end
+				syncActiveUsers(data.users or data.activeUsers)
 				if type(data.messages) == "table" then
 					for _, m in ipairs(data.messages) do
 						local mid = tonumber(m.id) or 0
 						if mid > lastMsgId then
 							lastMsgId = mid
-							local mUser = tostring(m.user or "Player")
-							local mEdited = tostring(m.displayName or m.editedName or m.nick or mUser)
-							appendChatLine(mUser, tostring(m.text or ""), m.userId, m.time or m.timestamp or m.createdAt, nil, mEdited)
+							appendChatLine(tostring(m.user or "Player"), tostring(m.text or ""), m.userId, m.time or m.timestamp or m.createdAt)
 						end
 					end
 				end
@@ -1050,8 +1097,8 @@ RunBtn.MouseButton1Click:Connect(function()
 	local hubTitleText = SelectedHub == "Venyx" and "Venyx Hub V13 Max" or (SelectedHub == "Divine" and "Divine Hub (Aquavine)" or "Chilli & Venyx & Divine V13 Max")
 	local ActiveGui = Instance.new("ScreenGui")
 	ActiveGui.Name = "ActiveHubNotification"
-	ActiveGui.Parent = CoreGui
 	ActiveGui.ResetOnSpawn = false
+	attachGui(ActiveGui)
 
 	local NotifFrame = Instance.new("Frame")
 	NotifFrame.Parent = ActiveGui
