@@ -85,7 +85,7 @@ local IconBox = makeLbl(ProfileCard, UDim2.new(0, 8, 0.5, -14), UDim2.new(0, 28,
 IconBox.BackgroundTransparency, IconBox.BackgroundColor3 = 0.35, Color3.fromRGB(255, 105, 35)
 Instance.new("UICorner", IconBox).CornerRadius = UDim.new(0, 8)
 
-makeLbl(ProfileCard, UDim2.new(0, 42, 0, 3), UDim2.new(1, -50, 0, 16), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 12.5).TextStrokeTransparency = 0.2
+makeLbl(ProfileCard, UDim2.new(0, 42, 0, 3), UDim2.new(1, -50, 0, 16), Enum.Font.GothamBold, "Tác giả: Hirose x Miyano", Color3.fromRGB(255, 210, 130), 12.5).TextStrokeTransparency = 0.2
 local NameLabel = makeLbl(ProfileCard, UDim2.new(0, 42, 0, 19), UDim2.new(1, -50, 0, 13), Enum.Font.GothamBold, "Chilli & Venyx & Divine V13 Max", Color3.fromRGB(255, 235, 190), 10)
 local SubLabel = makeLbl(ProfileCard, UDim2.new(0, 42, 0, 32), UDim2.new(1, -50, 0, 12), Enum.Font.Gotham, "● Sẵn sàng (Chilli VIP)", Color3.fromRGB(115, 255, 175), 9)
 
@@ -217,7 +217,7 @@ AuthorAfterIcon.Parent, AuthorAfterIcon.Position, AuthorAfterIcon.Size = ChatBox
 AuthorAfterIcon.BackgroundTransparency, AuthorAfterIcon.Image, AuthorAfterIcon.ScaleType, AuthorAfterIcon.ZIndex = 1, CUSTOM_ICON_ASSET, Enum.ScaleType.Crop, 11
 Instance.new("UICorner", AuthorAfterIcon).CornerRadius = UDim.new(1, 0)
 
-makeLbl(ChatBox, UDim2.new(0, 38, 0, 2), UDim2.new(1, -66, 0, 19), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 14.5).ZIndex = 11
+makeLbl(ChatBox, UDim2.new(0, 38, 0, 2), UDim2.new(1, -66, 0, 19), Enum.Font.GothamBold, "Tác giả: Hirose x Miyano", Color3.fromRGB(255, 210, 130), 14.5).ZIndex = 11
 makeLbl(ChatBox, UDim2.new(0, 38, 0, 22), UDim2.new(1, -128, 0, 13), Enum.Font.GothamMedium, DISCORD_LINK, Color3.fromRGB(170, 195, 255), 8.5).ZIndex = 11
 
 local OnlineToggleBtn = Instance.new("TextButton")
@@ -336,7 +336,7 @@ local function resolveUserId(username, userId)
 	local idNum = tonumber(userId)
 	if idNum and idNum > 0 then return idNum end
 	local uname = tostring(username or "")
-	if uname == "" or uname == "Player" or uname == "Hệ thống" or uname == "Hirose x Miyanno" then return nil end
+	if uname == "" or uname == "Player" or uname == "Hệ thống" or uname == "Hirose x Miyano" then return nil end
 	if userIdCache[uname] then return userIdCache[uname] end
 	local plr = Players:FindFirstChild(uname)
 	if plr and plr.UserId > 0 then userIdCache[uname] = plr.UserId return plr.UserId end
@@ -532,7 +532,7 @@ end
 
 local function registerScriptUser(realName, editedName, userId, lastSeen)
 	local rName = tostring(realName or "")
-	if rName == "" or rName == "Player" or rName == "Hệ thống" or rName == "Hirose x Miyanno" then return end
+	if rName == "" or rName == "Player" or rName == "Hệ thống" or rName == "Hirose x Miyano" then return end
 	local eName = tostring(editedName or "")
 	if eName == "" then local plr = Players:FindFirstChild(rName) eName = (plr and plr.DisplayName) or rName end
 	local ts = tonumber(lastSeen) or os.time()
@@ -543,6 +543,42 @@ end
 
 OnlineToggleBtn.MouseButton1Click:Connect(function() rebuildOnlineList() OnlinePanel.Visible = not OnlinePanel.Visible end)
 BackFromOnlineBtn.MouseButton1Click:Connect(function() OnlinePanel.Visible = false end)
+
+ChatInput = Instance.new("TextBox")
+ChatInput.Parent, ChatInput.Position, ChatInput.Size = ChatBox, UDim2.new(0, 6, 1, -27), UDim2.new(1, -78, 0, 22)
+ChatInput.BackgroundColor3, ChatInput.BackgroundTransparency = Color3.fromRGB(0, 0, 0), 0.22
+ChatInput.Font, ChatInput.PlaceholderText, ChatInput.PlaceholderColor3 = Enum.Font.Gotham, "Nhập tin nhắn...", Color3.fromRGB(220, 225, 240)
+ChatInput.Text, ChatInput.TextColor3, ChatInput.TextSize, ChatInput.ClearTextOnFocus, ChatInput.ZIndex = "", Color3.fromRGB(255, 255, 255), 10.5, false, 11
+Instance.new("UICorner", ChatInput).CornerRadius = UDim.new(0, 6)
+
+local OpenSendIconBtn = Instance.new("TextButton")
+OpenSendIconBtn.Parent, OpenSendIconBtn.Position, OpenSendIconBtn.Size = ChatBox, UDim2.new(1, -68, 1, -27), UDim2.new(0, 24, 0, 22)
+OpenSendIconBtn.BackgroundColor3, OpenSendIconBtn.BackgroundTransparency = Color3.fromRGB(48, 36, 68), 0.15
+OpenSendIconBtn.Font, OpenSendIconBtn.Text, OpenSendIconBtn.TextColor3, OpenSendIconBtn.TextSize, OpenSendIconBtn.ZIndex = Enum.Font.GothamBold, "😀", Color3.fromRGB(255, 255, 255), 12, 11
+Instance.new("UICorner", OpenSendIconBtn).CornerRadius = UDim.new(0, 6)
+
+local SendChatBtn = Instance.new("TextButton")
+SendChatBtn.Parent, SendChatBtn.Position, SendChatBtn.Size = ChatBox, UDim2.new(1, -40, 1, -27), UDim2.new(0, 34, 0, 22)
+SendChatBtn.BackgroundColor3, SendChatBtn.BackgroundTransparency = Color3.fromRGB(255, 105, 35), 0.12
+SendChatBtn.Font, SendChatBtn.Text, SendChatBtn.TextColor3, SendChatBtn.TextSize, SendChatBtn.ZIndex = Enum.Font.GothamBold, "GỬI", Color3.fromRGB(255, 255, 255), 10, 11
+Instance.new("UICorner", SendChatBtn).CornerRadius = UDim.new(0, 6)
+
+local SendIconPopup = Instance.new("Frame")
+SendIconPopup.Parent, SendIconPopup.Position, SendIconPopup.Size = ChatBox, UDim2.new(0, 6, 1, -69), UDim2.new(1, -12, 0, 38)
+SendIconPopup.BackgroundColor3, SendIconPopup.BackgroundTransparency, SendIconPopup.Visible, SendIconPopup.ZIndex = Color3.fromRGB(22, 18, 34), 0.08, false, 24
+Instance.new("UICorner", SendIconPopup).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", SendIconPopup).Color = Color3.fromRGB(255, 130, 60)
+
+local SendIconScroll = Instance.new("ScrollingFrame")
+SendIconScroll.Parent, SendIconScroll.Position, SendIconScroll.Size = SendIconPopup, UDim2.new(0, 4, 0, 3), UDim2.new(1, -8, 1, -6)
+SendIconScroll.BackgroundTransparency, SendIconScroll.BorderSizePixel, SendIconScroll.ScrollBarThickness = 1, 0, 2
+SendIconScroll.ScrollingDirection, SendIconScroll.CanvasSize, SendIconScroll.AutomaticCanvasSize, SendIconScroll.Active, SendIconScroll.ZIndex = Enum.ScrollingDirection.X, UDim2.new(0, 0, 0, 0), Enum.AutomaticSize.X, true, 25
+local SendIconLayout = Instance.new("UIListLayout")
+SendIconLayout.Parent, SendIconLayout.FillDirection, SendIconLayout.VerticalAlignment, SendIconLayout.Padding = SendIconScroll, Enum.FillDirection.Horizontal, Enum.VerticalAlignment.Center, UDim.new(0, 5)
+attachHDrag(SendIconScroll, 1.25)
+
+local twentyIcons = {"😀", "😂", "🥰", "😎", "🤩", "😭", "😡", "🤯", "🥳", "👍", "❤️", "🔥", "💯", "✨", "🎉", "🤝", "🙏", "👀", "🤡", "💔"}
+l
 local function formatLockedTime(ts)
 	local num = tonumber(ts)
 	if num and num > 0 then
@@ -551,7 +587,7 @@ local function formatLockedTime(ts)
 		if ok and type(dt) == "string" and #dt == 5 then return dt end
 	end
 	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
-	return (okNow and nowStr) or "01:54"
+	return (okNow and nowStr) or "02:08"
 end
 
 local msgOrder = 0
@@ -622,39 +658,6 @@ local function appendChatLine(username, text, userId, timestamp, customColor, sh
 	task.defer(function() MsgScroll.CanvasPosition = Vector2.new(0, math.max(0, MsgScroll.AbsoluteCanvasSize.Y - MsgScroll.AbsoluteWindowSize.Y)) end)
 end
 
-ChatInput = Instance.new("TextBox")
-ChatInput.Parent, ChatInput.Position, ChatInput.Size = ChatBox, UDim2.new(0, 6, 1, -27), UDim2.new(1, -78, 0, 22)
-ChatInput.BackgroundColor3, ChatInput.BackgroundTransparency = Color3.fromRGB(0, 0, 0), 0.22
-ChatInput.Font, ChatInput.PlaceholderText, ChatInput.PlaceholderColor3 = Enum.Font.Gotham, "Nhập tin nhắn...", Color3.fromRGB(220, 225, 240)
-ChatInput.Text, ChatInput.TextColor3, ChatInput.TextSize, ChatInput.ClearTextOnFocus, ChatInput.ZIndex = "", Color3.fromRGB(255, 255, 255), 10.5, false, 11
-Instance.new("UICorner", ChatInput).CornerRadius = UDim.new(0, 6)
-
-local OpenSendIconBtn = Instance.new("TextButton")
-OpenSendIconBtn.Parent, OpenSendIconBtn.Position, OpenSendIconBtn.Size = ChatBox, UDim2.new(1, -68, 1, -27), UDim2.new(0, 24, 0, 22)
-OpenSendIconBtn.BackgroundColor3, OpenSendIconBtn.BackgroundTransparency = Color3.fromRGB(48, 36, 68), 0.15
-OpenSendIconBtn.Font, OpenSendIconBtn.Text, OpenSendIconBtn.TextColor3, OpenSendIconBtn.TextSize, OpenSendIconBtn.ZIndex = Enum.Font.GothamBold, "😀", Color3.fromRGB(255, 255, 255), 12, 11
-Instance.new("UICorner", OpenSendIconBtn).CornerRadius = UDim.new(0, 6)
-
-local SendChatBtn = Instance.new("TextButton")
-SendChatBtn.Parent, SendChatBtn.Position, SendChatBtn.Size = ChatBox, UDim2.new(1, -40, 1, -27), UDim2.new(0, 34, 0, 22)
-SendChatBtn.BackgroundColor3, SendChatBtn.BackgroundTransparency = Color3.fromRGB(255, 105, 35), 0.12
-SendChatBtn.Font, SendChatBtn.Text, SendChatBtn.TextColor3, SendChatBtn.TextSize, SendChatBtn.ZIndex = Enum.Font.GothamBold, "GỬI", Color3.fromRGB(255, 255, 255), 10, 11
-Instance.new("UICorner", SendChatBtn).CornerRadius = UDim.new(0, 6)
-
-local SendIconPopup = Instance.new("Frame")
-SendIconPopup.Parent, SendIconPopup.Position, SendIconPopup.Size = ChatBox, UDim2.new(0, 6, 1, -69), UDim2.new(1, -12, 0, 38)
-SendIconPopup.BackgroundColor3, SendIconPopup.BackgroundTransparency, SendIconPopup.Visible, SendIconPopup.ZIndex = Color3.fromRGB(22, 18, 34), 0.08, false, 24
-Instance.new("UICorner", SendIconPopup).CornerRadius = UDim.new(0, 10)
-Instance.new("UIStroke", SendIconPopup).Color = Color3.fromRGB(255, 130, 60)
-
-local SendIconScroll = Instance.new("ScrollingFrame")
-SendIconScroll.Parent, SendIconScroll.Position, SendIconScroll.Size = SendIconPopup, UDim2.new(0, 4, 0, 3), UDim2.new(1, -8, 1, -6)
-SendIconScroll.BackgroundTransparency, SendIconScroll.BorderSizePixel, SendIconScroll.ScrollBarThickness = 1, 0, 2
-SendIconScroll.ScrollingDirection, SendIconScroll.CanvasSize, SendIconScroll.AutomaticCanvasSize, SendIconScroll.Active, SendIconScroll.ZIndex = Enum.ScrollingDirection.X, UDim2.new(0, 0, 0, 0), Enum.AutomaticSize.X, true, 25
-local SendIconLayout = Instance.new("UIListLayout")
-SendIconLayout.Parent, SendIconLayout.FillDirection, SendIconLayout.VerticalAlignment, SendIconLayout.Padding = SendIconScroll, Enum.FillDirection.Horizontal, Enum.VerticalAlignment.Center, UDim.new(0, 5)
-attachHDrag(SendIconScroll, 1.25)
-
 local isSending = false
 sendDirectText = function(msgStr)
 	if isSending or not reqFunc then return end
@@ -672,15 +675,6 @@ sendDirectText = function(msgStr)
 	end)
 end
 
-for idx, ic in ipairs({"😀", "😂", "🥰", "😎", "🤩", "😭", "😡", "🤯", "🥳", "👍", "❤️", "🔥", "💯", "✨", "🎉", "🤝", "🙏", "👀", "🤡", "💔"}) do
-	local ib = Instance.new("TextButton")
-	ib.Parent, ib.LayoutOrder, ib.Size = SendIconScroll, idx, UDim2.new(0, 28, 0, 28)
-	ib.BackgroundColor3, ib.BackgroundTransparency, ib.Font, ib.Text, ib.TextColor3, ib.TextSize, ib.ZIndex = Color3.fromRGB(48, 36, 68), 0.15, Enum.Font.GothamBold, ic, Color3.fromRGB(255, 255, 255), 14, 26
-	Instance.new("UICorner", ib).CornerRadius = UDim.new(1, 0)
-	ib.MouseButton1Click:Connect(function() SendIconPopup.Visible = false sendDirectText(ic) end)
-end
-
-OpenSendIconBtn.MouseButton1Click:Connect(function() SendIconPopup.Visible = not SendIconPopup.Visible end)
 ChatPill.MouseButton1Click:Connect(function() ChatBox.Visible, ChatPill.Visible = true, false end)
 HideChatBtn.MouseButton1Click:Connect(function() ChatBox.Visible, OnlinePanel.Visible, ActionSheet.Visible, ProfileModal.Visible, SendIconPopup.Visible, ChatPill.Visible = false, false, false, false, false, true end)
 local function sendCrossChat() local txt = ChatInput.Text ChatInput.Text = "" sendDirectText(txt) end
@@ -804,12 +798,12 @@ RunBtn.MouseButton1Click:Connect(function()
 	IconImage.Size, IconImage.BackgroundTransparency, IconImage.Image, IconImage.ScaleType = UDim2.new(1, 0, 1, 0), 1, "rbxassetid://83467411655369", Enum.ScaleType.Crop
 	Instance.new("UICorner", IconImage).CornerRadius = UDim.new(1, 0)
 	local NotifTitle = makeLbl(NotifFrame, UDim2.new(0, 38, 0, 5), UDim2.new(1, -75, 0, 15), Enum.Font.GothamBold, hubTitleText, Color3.fromRGB(255, 190, 120), 9)
-	local NotifSub = makeLbl(NotifFrame, UDim2.new(0, 38, 0, 21), UDim2.new(1, -75, 0, 14), Enum.Font.GothamBold, "👤 Tác giả: Hirose x Miyanno | 💬 Bấm copy link", Color3.fromRGB(255, 100, 100), 7.5)
+	local NotifSub = makeLbl(NotifFrame, UDim2.new(0, 38, 0, 21), UDim2.new(1, -75, 0, 14), Enum.Font.GothamBold, "👤 Tác giả: Hirose x Miyano | 💬 Bấm copy link", Color3.fromRGB(255, 100, 100), 7.5)
 	local NotifDetail = makeLbl(NotifFrame, UDim2.new(0, 38, 0, 35), UDim2.new(1, -75, 0, 14), Enum.Font.GothamMedium, "discord.gg/uqhEpzXy9q", Color3.fromRGB(160, 170, 255), 8)
 	local ClickBtn = Instance.new("TextButton", NotifFrame)
 	ClickBtn.Position, ClickBtn.Size, ClickBtn.BackgroundTransparency, ClickBtn.Text = UDim2.new(0, 38, 0, 0), UDim2.new(1, -75, 1, 0), 1, ""
 	ClickBtn.MouseButton1Click:Connect(function() if setclipboard then pcall(setclipboard, DISCORD_LINK) end NotifTitle.Text = "✓ ĐÃ SAO CHÉP LINK!" task.wait(1.5) NotifTitle.Text = hubTitleText end)
-	local MinimizeText = makeLbl(NotifFrame, UDim2.new(0, 12, 0, 0), UDim2.new(1, -44, 1, 0), Enum.Font.GothamBold, "Tác Giả: Hirose x Miyanno", Color3.fromRGB(255, 120, 120), 9)
+	local MinimizeText = makeLbl(NotifFrame, UDim2.new(0, 12, 0, 0), UDim2.new(1, -44, 1, 0), Enum.Font.GothamBold, "Tác Giả: Hirose x Miyano", Color3.fromRGB(255, 120, 120), 9)
 	MinimizeText.Visible = false
 	local ToggleBtn = Instance.new("TextButton", NotifFrame)
 	ToggleBtn.Position, ToggleBtn.Size = UDim2.new(1, -32, 0.5, -14), UDim2.new(0, 26, 0, 26)
