@@ -4,6 +4,7 @@ local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
+local MarketplaceService = game:GetService("MarketplaceService")
 local Terrain = workspace:FindFirstChildOfClass("Terrain")
 local LocalPlayer = Players.LocalPlayer
 
@@ -224,7 +225,7 @@ local function makeInfoCard(posY, height)
 	return f
 end
 
-local function makeCardLabel(parent, pos, size, font, text, color, textSize, stroke)
+local function makeCardLabel(parent, pos, size, font, text, color, textSize)
 	local l = Instance.new("TextLabel")
 	l.Parent = parent
 	l.Position = pos
@@ -233,7 +234,7 @@ local function makeCardLabel(parent, pos, size, font, text, color, textSize, str
 	l.Font = font
 	l.Text = text
 	l.TextColor3 = color
-	l.TextStrokeTransparency = stroke or 0.25
+	l.TextStrokeTransparency = 0.25
 	l.TextSize = textSize
 	l.TextXAlignment = Enum.TextXAlignment.Left
 	l.ZIndex = 2
@@ -429,14 +430,13 @@ WishContainer.UICorner.CornerRadius = UDim.new(0, 8)
 local WishLabel = makeCardLabel(WishContainer, UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 1, 0), Enum.Font.GothamBold, "✨ CHÚC BẠN CHƠI GAME VUI VẺ 👉👈", Color3.fromRGB(255, 210, 130), 9)
 WishLabel.TextXAlignment = Enum.TextXAlignment.Center
 WishLabel.ZIndex = 3
-local reqFunc = (syn and syn.request) or (http and http.request) or request or http_request
 
+local reqFunc = (syn and syn.request) or (http and http.request) or request or http_request
 local function safeDecode(raw)
 	if type(raw) ~= "string" or raw == "" then return nil end
 	local ok, decoded = pcall(function() return HttpService:JSONDecode(raw) end)
 	return ok and decoded or nil
 end
-
 local function safeEncode(tbl)
 	local ok, encoded = pcall(function() return HttpService:JSONEncode(tbl) end)
 	return ok and encoded or nil
@@ -482,47 +482,16 @@ local ChatBg = Instance.new("ImageLabel")
 ChatBg.Name = "ChatBg"
 ChatBg.Parent = ChatBox
 ChatBg.Size = UDim2.new(1, 0, 1, 0)
-ChatBg.Position = UDim2.new(0, 0, 0, 0)
 ChatBg.Image = "rbxassetid://73666208807237"
 ChatBg.ScaleType = Enum.ScaleType.Crop
 ChatBg.BackgroundTransparency = 1
-ChatBg.ImageTransparency = 0
 ChatBg.ZIndex = 9
 Instance.new("UICorner", ChatBg).CornerRadius = UDim.new(0, 12)
 
-local ChatDim = Instance.new("Frame")
-ChatDim.Parent = ChatBox
-ChatDim.Size = UDim2.new(1, 0, 1, 0)
-ChatDim.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-ChatDim.BackgroundTransparency = 0.85
-ChatDim.BorderSizePixel = 0
-ChatDim.ZIndex = 9
-Instance.new("UICorner", ChatDim).CornerRadius = UDim.new(0, 12)
-
-local ChatAuthorLabel = Instance.new("TextLabel")
-ChatAuthorLabel.Parent = ChatBox
-ChatAuthorLabel.Position = UDim2.new(0, 8, 0, 4)
-ChatAuthorLabel.Size = UDim2.new(1, -34, 0, 18)
-ChatAuthorLabel.BackgroundTransparency = 1
-ChatAuthorLabel.Font = Enum.Font.GothamBold
-ChatAuthorLabel.Text = "Tác giả: Hirose x Miyanno"
-ChatAuthorLabel.TextColor3 = Color3.fromRGB(255, 210, 130)
-ChatAuthorLabel.TextStrokeTransparency = 0.2
-ChatAuthorLabel.TextSize = 13
-ChatAuthorLabel.TextXAlignment = Enum.TextXAlignment.Left
+local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 4), UDim2.new(1, -34, 0, 18), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 13)
 ChatAuthorLabel.ZIndex = 11
 
-local ChatDiscordSub = Instance.new("TextLabel")
-ChatDiscordSub.Parent = ChatBox
-ChatDiscordSub.Position = UDim2.new(0, 8, 0, 21)
-ChatDiscordSub.Size = UDim2.new(1, -98, 0, 13)
-ChatDiscordSub.BackgroundTransparency = 1
-ChatDiscordSub.Font = Enum.Font.GothamMedium
-ChatDiscordSub.Text = "https://discord.gg/uqhEpzXy9q"
-ChatDiscordSub.TextColor3 = Color3.fromRGB(170, 195, 255)
-ChatDiscordSub.TextStrokeTransparency = 0.25
-ChatDiscordSub.TextSize = 8.5
-ChatDiscordSub.TextXAlignment = Enum.TextXAlignment.Left
+local ChatDiscordSub = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 21), UDim2.new(1, -98, 0, 13), Enum.Font.GothamMedium, DISCORD_LINK, Color3.fromRGB(170, 195, 255), 8.5)
 ChatDiscordSub.ZIndex = 11
 
 local OnlineToggleBtn = Instance.new("TextButton")
@@ -555,37 +524,31 @@ local MsgScroll = Instance.new("ScrollingFrame")
 MsgScroll.Parent = ChatBox
 MsgScroll.Position = UDim2.new(0, 6, 0, 37)
 MsgScroll.Size = UDim2.new(1, -12, 1, -71)
-MsgScroll.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-MsgScroll.BackgroundTransparency = 0.88
+MsgScroll.BackgroundTransparency = 1
 MsgScroll.BorderSizePixel = 0
 MsgScroll.ScrollBarThickness = 3
 MsgScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 MsgScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
 MsgScroll.ZIndex = 10
-Instance.new("UICorner", MsgScroll).CornerRadius = UDim.new(0, 8)
 
 local MsgLayout = Instance.new("UIListLayout")
 MsgLayout.Parent = MsgScroll
 MsgLayout.SortOrder = Enum.SortOrder.LayoutOrder
-MsgLayout.Padding = UDim.new(0, 5)
+MsgLayout.Padding = UDim.new(0, 6)
 
 local MsgPad = Instance.new("UIPadding")
 MsgPad.Parent = MsgScroll
-MsgPad.PaddingTop = UDim.new(0, 5)
-MsgPad.PaddingBottom = UDim.new(0, 5)
-MsgPad.PaddingLeft = UDim.new(0, 5)
-MsgPad.PaddingRight = UDim.new(0, 5)
+MsgPad.PaddingTop, MsgPad.PaddingBottom, MsgPad.PaddingLeft, MsgPad.PaddingRight = UDim.new(0, 4), UDim.new(0, 4), UDim.new(0, 4), UDim.new(0, 4)
 
 local OnlinePanel = Instance.new("Frame")
-OnlinePanel.Name = "OnlinePanel"
 OnlinePanel.Parent = ChatBox
 OnlinePanel.Position = UDim2.new(0, 6, 0, 37)
 OnlinePanel.Size = UDim2.new(1, -12, 1, -43)
 OnlinePanel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-OnlinePanel.BackgroundTransparency = 0.75
+OnlinePanel.BackgroundTransparency = 0.72
 OnlinePanel.BorderSizePixel = 0
 OnlinePanel.Visible = false
-OnlinePanel.ZIndex = 13
+OnlinePanel.ZIndex = 14
 Instance.new("UICorner", OnlinePanel).CornerRadius = UDim.new(0, 8)
 
 local BackFromOnlineBtn = Instance.new("TextButton")
@@ -598,21 +561,12 @@ BackFromOnlineBtn.Font = Enum.Font.GothamBold
 BackFromOnlineBtn.Text = "< Quay lại"
 BackFromOnlineBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 BackFromOnlineBtn.TextSize = 8.5
-BackFromOnlineBtn.ZIndex = 14
+BackFromOnlineBtn.ZIndex = 15
 Instance.new("UICorner", BackFromOnlineBtn).CornerRadius = UDim.new(0, 6)
 
-local OnlineListTitle = Instance.new("TextLabel")
-OnlineListTitle.Parent = OnlinePanel
-OnlineListTitle.Position = UDim2.new(0, 74, 0, 4)
-OnlineListTitle.Size = UDim2.new(1, -80, 0, 18)
-OnlineListTitle.BackgroundTransparency = 1
-OnlineListTitle.Font = Enum.Font.GothamBold
-OnlineListTitle.Text = "Đang bật script · 1"
-OnlineListTitle.TextColor3 = Color3.fromRGB(115, 255, 175)
-OnlineListTitle.TextStrokeTransparency = 0.25
-OnlineListTitle.TextSize = 9.5
+local OnlineListTitle = makeCardLabel(OnlinePanel, UDim2.new(0, 74, 0, 4), UDim2.new(1, -80, 0, 18), Enum.Font.GothamBold, "Đang bật script · 1", Color3.fromRGB(115, 255, 175), 9.5)
 OnlineListTitle.TextXAlignment = Enum.TextXAlignment.Right
-OnlineListTitle.ZIndex = 14
+OnlineListTitle.ZIndex = 15
 
 local OnlineScroll = Instance.new("ScrollingFrame")
 OnlineScroll.Parent = OnlinePanel
@@ -623,13 +577,21 @@ OnlineScroll.BorderSizePixel = 0
 OnlineScroll.ScrollBarThickness = 3
 OnlineScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 OnlineScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
-OnlineScroll.ZIndex = 14
+OnlineScroll.ZIndex = 15
 
 local OnlineLayout = Instance.new("UIListLayout")
 OnlineLayout.Parent = OnlineScroll
 OnlineLayout.SortOrder = Enum.SortOrder.LayoutOrder
 OnlineLayout.Padding = UDim.new(0, 4)
 local avatarCache, userIdCache, activeScriptUsers = {}, {}, {}
+local currentGameName = "Roblox"
+
+task.spawn(function()
+	local ok, info = pcall(function() return MarketplaceService:GetProductInfoAsync(game.PlaceId) end)
+	if ok and info and type(info.Name) == "string" and info.Name ~= "" then
+		currentGameName = info.Name
+	end
+end)
 
 local function resolveUserId(username, userId)
 	local idNum = tonumber(userId)
@@ -665,6 +627,155 @@ local function applyAvatarAsync(avatarImg, username, userId)
 	end)
 end
 
+local ProfileModal = Instance.new("Frame")
+ProfileModal.Parent = ChatBox
+ProfileModal.Position = UDim2.new(0, 12, 0.1, 0)
+ProfileModal.Size = UDim2.new(1, -24, 0, 266)
+ProfileModal.BackgroundColor3 = Color3.fromRGB(16, 17, 24)
+ProfileModal.BackgroundTransparency = 0.08
+ProfileModal.BorderSizePixel = 0
+ProfileModal.Visible = false
+ProfileModal.ZIndex = 20
+Instance.new("UICorner", ProfileModal).CornerRadius = UDim.new(0, 12)
+
+local CloseProfileBtn = Instance.new("TextButton")
+CloseProfileBtn.Parent = ProfileModal
+CloseProfileBtn.Position = UDim2.new(1, -24, 0, 6)
+CloseProfileBtn.Size = UDim2.new(0, 18, 0, 18)
+CloseProfileBtn.BackgroundColor3 = Color3.fromRGB(220, 65, 65)
+CloseProfileBtn.Font = Enum.Font.GothamBold
+CloseProfileBtn.Text = "X"
+CloseProfileBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseProfileBtn.TextSize = 9
+CloseProfileBtn.ZIndex = 21
+Instance.new("UICorner", CloseProfileBtn).CornerRadius = UDim.new(1, 0)
+CloseProfileBtn.MouseButton1Click:Connect(function() ProfileModal.Visible = false end)
+
+local BigAvatar = Instance.new("ImageLabel")
+BigAvatar.Parent = ProfileModal
+BigAvatar.AnchorPoint = Vector2.new(0.5, 0)
+BigAvatar.Position = UDim2.new(0.5, 0, 0, 10)
+BigAvatar.Size = UDim2.new(0, 64, 0, 64)
+BigAvatar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+BigAvatar.BackgroundTransparency = 0.5
+BigAvatar.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+BigAvatar.ScaleType = Enum.ScaleType.Crop
+BigAvatar.ZIndex = 21
+Instance.new("UICorner", BigAvatar).CornerRadius = UDim.new(1, 0)
+
+local ProfileCurrentName = makeCardLabel(ProfileModal, UDim2.new(0, 10, 0, 78), UDim2.new(1, -20, 0, 16), Enum.Font.GothamBold, "", Color3.fromRGB(255, 220, 120), 11.5)
+ProfileCurrentName.TextXAlignment = Enum.TextXAlignment.Center
+ProfileCurrentName.ZIndex = 21
+
+local ProfileHandleName = makeCardLabel(ProfileModal, UDim2.new(0, 10, 0, 94), UDim2.new(1, -20, 0, 13), Enum.Font.Gotham, "", Color3.fromRGB(185, 200, 225), 9)
+ProfileHandleName.TextXAlignment = Enum.TextXAlignment.Center
+ProfileHandleName.ZIndex = 21
+
+local ProfileInfoBody = makeCardLabel(ProfileModal, UDim2.new(0, 12, 0, 114), UDim2.new(1, -24, 0, 142), Enum.Font.GothamMedium, "", Color3.fromRGB(240, 244, 255), 10)
+ProfileInfoBody.TextWrapped = true
+ProfileInfoBody.TextYAlignment = Enum.TextYAlignment.Top
+ProfileInfoBody.ZIndex = 21
+
+local function openUserProfile(rawUser, userId)
+	local uname = tostring(rawUser or "Player")
+	local plr = Players:FindFirstChild(uname)
+	local curName = (plr and plr.DisplayName) or uname
+	local resolvedId = resolveUserId(uname, userId) or 0
+	BigAvatar.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+	applyAvatarAsync(BigAvatar, uname, resolvedId)
+	ProfileCurrentName.Text = curName
+	ProfileHandleName.Text = "@" .. uname
+	ProfileInfoBody.Text = "Tên: " .. curName .. "\nId: " .. tostring(resolvedId) .. "\nNgày tạo: Đang tải...\nThời gian: Đang tải...\nGame: " .. tostring(currentGameName)
+	ProfileModal.Visible = true
+	if resolvedId > 0 and reqFunc then
+		task.spawn(function()
+			local ok, res = pcall(function()
+				return reqFunc({ Url = "https://users.roblox.com/v1/users/" .. tostring(resolvedId), Method = "GET" })
+			end)
+			local d = ok and res and safeDecode(res.Body)
+			if type(d) == "table" and type(d.created) == "string" then
+				local y, m, day = d.created:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)")
+				local dateStr = (y and m and day) and (day .. "/" .. m .. "/" .. y) or d.created
+				local ageStr = "Không rõ"
+				if y and m and day then
+					local createdTs = os.time({ year = tonumber(y), month = tonumber(m), day = tonumber(day), hour = 0, min = 0, sec = 0 })
+					if createdTs and os.time() >= createdTs then
+						ageStr = tostring(math.floor((os.time() - createdTs) / 86400)) .. " ngày"
+					end
+				end
+				if ProfileModal.Visible then
+					ProfileInfoBody.Text = "Tên: " .. curName .. "\nId: " .. tostring(resolvedId) .. "\nNgày tạo: " .. dateStr .. "\nThời gian: " .. ageStr .. "\nGame: " .. tostring(currentGameName)
+				end
+			end
+		end)
+	end
+end
+
+local ActionSheet = Instance.new("Frame")
+ActionSheet.Parent = ChatBox
+ActionSheet.Position = UDim2.new(0, 8, 0.44, 0)
+ActionSheet.Size = UDim2.new(1, -16, 0, 82)
+ActionSheet.BackgroundColor3 = Color3.fromRGB(16, 17, 24)
+ActionSheet.BackgroundTransparency = 0.08
+ActionSheet.BorderSizePixel = 0
+ActionSheet.Visible = false
+ActionSheet.ZIndex = 19
+Instance.new("UICorner", ActionSheet).CornerRadius = UDim.new(0, 10)
+
+local selectedMsgTarget = nil
+local function makeSheetBtn(pos, size, bg, text)
+	local b = Instance.new("TextButton")
+	b.Parent = ActionSheet
+	b.Position, b.Size, b.BackgroundColor3 = pos, size, bg
+	b.Font = Enum.Font.GothamBold
+	b.Text = text
+	b.TextColor3 = Color3.fromRGB(255, 255, 255)
+	b.TextSize = 9
+	b.ZIndex = 20
+	Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6)
+	return b
+end
+
+local DmBtn = makeSheetBtn(UDim2.new(0, 6, 0, 6), UDim2.new(0.31, -4, 0, 26), Color3.fromRGB(45, 135, 235), "💬 Nhắn riêng")
+local CopyMsgBtn = makeSheetBtn(UDim2.new(0.34, 0, 0, 6), UDim2.new(0.31, -4, 0, 26), Color3.fromRGB(42, 45, 58), "📋 Chép")
+local ReplyMsgBtn = makeSheetBtn(UDim2.new(0.67, 0, 0, 6), UDim2.new(0.33, -6, 0, 26), Color3.fromRGB(235, 110, 45), "↩ Trả lời")
+
+local ChatInput
+local function setReplyMode(target)
+	if not target or not ChatInput then return end
+	ChatInput.Text = "@" .. tostring(target.user) .. " (" .. tostring(target.text) .. ") "
+	ChatInput:CaptureFocus()
+end
+
+DmBtn.MouseButton1Click:Connect(function()
+	if selectedMsgTarget then setReplyMode(selectedMsgTarget) end
+	ActionSheet.Visible = false
+end)
+CopyMsgBtn.MouseButton1Click:Connect(function()
+	if selectedMsgTarget and setclipboard then pcall(setclipboard, tostring(selectedMsgTarget.text or "")) end
+	ActionSheet.Visible = false
+end)
+ReplyMsgBtn.MouseButton1Click:Connect(function()
+	if selectedMsgTarget then setReplyMode(selectedMsgTarget) end
+	ActionSheet.Visible = false
+end)
+
+local emojis = {"❤️", "😂", "😮", "😢", "👍", "🔥"}
+for i, em in ipairs(emojis) do
+	local eb = makeSheetBtn(UDim2.new(0, 6 + (i - 1) * 32, 0, 40), UDim2.new(0, 28, 0, 26), Color3.fromRGB(32, 34, 44), em)
+	eb.TextSize = 13
+	eb.MouseButton1Click:Connect(function()
+		if selectedMsgTarget and selectedMsgTarget.reactLabel then
+			selectedMsgTarget.reactLabel.Text = em
+			selectedMsgTarget.reactLabel.Visible = true
+		end
+		ActionSheet.Visible = false
+	end)
+end
+
+local CloseSheetBtn = makeSheetBtn(UDim2.new(1, -28, 0, 40), UDim2.new(0, 22, 0, 26), Color3.fromRGB(55, 58, 70), "X")
+CloseSheetBtn.MouseButton1Click:Connect(function() ActionSheet.Visible = false end)
+
 local function rebuildOnlineList()
 	for _, child in ipairs(OnlineScroll:GetChildren()) do
 		if child:IsA("Frame") then child:Destroy() end
@@ -679,7 +790,7 @@ local function rebuildOnlineList()
 		item.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 		item.BackgroundTransparency = 0.72
 		item.BorderSizePixel = 0
-		item.ZIndex = 15
+		item.ZIndex = 16
 		Instance.new("UICorner", item).CornerRadius = UDim.new(0, 7)
 
 		local av = Instance.new("ImageLabel")
@@ -690,35 +801,15 @@ local function rebuildOnlineList()
 		av.BackgroundTransparency = 0.65
 		av.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
 		av.ScaleType = Enum.ScaleType.Crop
-		av.ZIndex = 16
+		av.ZIndex = 17
 		Instance.new("UICorner", av).CornerRadius = UDim.new(1, 0)
 		applyAvatarAsync(av, info.realName, info.userId)
 
-		local editedLbl = Instance.new("TextLabel")
-		editedLbl.Parent = item
-		editedLbl.Position = UDim2.new(0, 34, 0, 3)
-		editedLbl.Size = UDim2.new(1, -40, 0, 14)
-		editedLbl.BackgroundTransparency = 1
-		editedLbl.Font = Enum.Font.GothamBold
-		editedLbl.Text = tostring(info.editedName or info.realName)
-		editedLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-		editedLbl.TextStrokeTransparency = 0.25
-		editedLbl.TextSize = 10.5
-		editedLbl.TextXAlignment = Enum.TextXAlignment.Left
-		editedLbl.ZIndex = 16
+		local editedLbl = makeCardLabel(item, UDim2.new(0, 34, 0, 3), UDim2.new(1, -40, 0, 14), Enum.Font.GothamBold, tostring(info.editedName or info.realName), Color3.fromRGB(255, 255, 255), 10.5)
+		editedLbl.ZIndex = 17
 
-		local rawLbl = Instance.new("TextLabel")
-		rawLbl.Parent = item
-		rawLbl.Position = UDim2.new(0, 34, 0, 17)
-		rawLbl.Size = UDim2.new(1, -40, 0, 13)
-		rawLbl.BackgroundTransparency = 1
-		rawLbl.Font = Enum.Font.Gotham
-		rawLbl.Text = "@" .. tostring(info.realName)
-		rawLbl.TextColor3 = Color3.fromRGB(185, 200, 225)
-		rawLbl.TextStrokeTransparency = 0.25
-		rawLbl.TextSize = 8.5
-		rawLbl.TextXAlignment = Enum.TextXAlignment.Left
-		rawLbl.ZIndex = 16
+		local rawLbl = makeCardLabel(item, UDim2.new(0, 34, 0, 17), UDim2.new(1, -40, 0, 13), Enum.Font.Gotham, "@" .. tostring(info.realName), Color3.fromRGB(185, 200, 225), 8.5)
+		rawLbl.ZIndex = 17
 	end
 	local finalCount = math.max(1, count)
 	OnlineToggleBtn.Text = "● " .. tostring(finalCount) .. " online ▾"
@@ -739,8 +830,7 @@ end
 
 OnlineToggleBtn.MouseButton1Click:Connect(function() rebuildOnlineList() OnlinePanel.Visible = not OnlinePanel.Visible end)
 BackFromOnlineBtn.MouseButton1Click:Connect(function() OnlinePanel.Visible = false end)
-
-local function formatTimeShort(ts)
+local function formatExactTime(ts)
 	local num = tonumber(ts)
 	if num and num > 0 then
 		if num > 1e11 then num = math.floor(num / 1000) end
@@ -748,7 +838,7 @@ local function formatTimeShort(ts)
 		if ok and type(dt) == "string" and #dt == 5 then return dt end
 	end
 	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
-	return (okNow and nowStr) or "22:48"
+	return (okNow and nowStr) or "11:49"
 end
 
 local msgOrder = 0
@@ -759,76 +849,111 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	local myName = (LocalPlayer and LocalPlayer.Name) or ""
 	local isSelf = (myName ~= "" and safeUser == myName)
 	local isAdmin = (safeUser == ADMIN_ROBLOX_USERNAME)
-	local timeStr = formatTimeShort(timestamp)
+	local fixedTime = formatExactTime(timestamp)
 
 	local row = Instance.new("Frame")
 	row.Name = "MsgRow_" .. tostring(msgOrder)
 	row.Parent = MsgScroll
 	row.LayoutOrder = msgOrder
-	row.Size = UDim2.new(1, 0, 0, 42)
+	row.Size = UDim2.new(1, 0, 0, 44)
 	row.AutomaticSize = Enum.AutomaticSize.Y
-	row.BackgroundColor3 = isSelf and Color3.fromRGB(35, 22, 12) or Color3.fromRGB(0, 0, 0)
-	row.BackgroundTransparency = isSelf and 0.76 or 0.82
+	row.BackgroundTransparency = 1
 	row.BorderSizePixel = 0
 	row.ZIndex = 10
-	Instance.new("UICorner", row).CornerRadius = UDim.new(0, 8)
 
-	local avatarImg = Instance.new("ImageLabel")
+	local avatarImg = Instance.new("ImageButton")
 	avatarImg.Parent = row
 	avatarImg.Size = UDim2.new(0, 26, 0, 26)
-	avatarImg.Position = isSelf and UDim2.new(1, -31, 0, 6) or UDim2.new(0, 5, 0, 6)
+	avatarImg.Position = isSelf and UDim2.new(1, -28, 0, 2) or UDim2.new(0, 2, 0, 2)
 	avatarImg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	avatarImg.BackgroundTransparency = 0.65
+	avatarImg.BackgroundTransparency = 0.45
 	avatarImg.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
 	avatarImg.ScaleType = Enum.ScaleType.Crop
-	avatarImg.ZIndex = 11
+	avatarImg.ZIndex = 12
 	Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
 	applyAvatarAsync(avatarImg, safeUser, userId)
+	avatarImg.MouseButton1Click:Connect(function() openUserProfile(safeUser, userId) end)
 
-	local nameLabel = Instance.new("TextLabel")
-	nameLabel.Parent = row
-	nameLabel.Position = isSelf and UDim2.new(0, 6, 0, 3) or UDim2.new(0, 35, 0, 3)
-	nameLabel.Size = UDim2.new(1, -41, 0, 14)
-	nameLabel.BackgroundTransparency = 1
-	nameLabel.Font = Enum.Font.GothamBold
-	nameLabel.Text = safeUser .. (isAdmin and " [ADMIN]" or "") .. " · " .. timeStr
-	nameLabel.TextColor3 = customColor or (isAdmin and Color3.fromRGB(255, 95, 95) or (isSelf and Color3.fromRGB(255, 210, 125) or Color3.fromRGB(165, 225, 255)))
-	nameLabel.TextStrokeTransparency = 0.25
-	nameLabel.TextSize = 10.5
-	nameLabel.TextWrapped = true
-	nameLabel.TextXAlignment = isSelf and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
-	nameLabel.ZIndex = 11
+	local headerFrame = Instance.new("Frame")
+	headerFrame.Parent = row
+	headerFrame.Position = isSelf and UDim2.new(0, 4, 0, 0) or UDim2.new(0, 32, 0, 0)
+	headerFrame.Size = UDim2.new(1, -36, 0, 14)
+	headerFrame.BackgroundTransparency = 1
+	headerFrame.ZIndex = 11
 
-	local bodyLabel = Instance.new("TextLabel")
-	bodyLabel.Parent = row
-	bodyLabel.Position = isSelf and UDim2.new(0, 6, 0, 17) or UDim2.new(0, 35, 0, 17)
-	bodyLabel.Size = UDim2.new(1, -41, 0, 16)
-	bodyLabel.AutomaticSize = Enum.AutomaticSize.Y
-	bodyLabel.BackgroundTransparency = 1
-	bodyLabel.Font = Enum.Font.GothamMedium
-	bodyLabel.Text = safeText
-	bodyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-	bodyLabel.TextStrokeTransparency = 0.25
-	bodyLabel.TextSize = 11.5
-	bodyLabel.TextWrapped = true
-	bodyLabel.TextXAlignment = isSelf and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
-	bodyLabel.ZIndex = 11
+	local nameLbl = Instance.new("TextLabel")
+	nameLbl.Parent = headerFrame
+	nameLbl.Size = UDim2.new(1, 0, 1, 0)
+	nameLbl.BackgroundTransparency = 1
+	nameLbl.Font = Enum.Font.GothamBold
+	nameLbl.TextStrokeTransparency = 0.25
+	nameLbl.TextSize = 10
+	nameLbl.TextXAlignment = isSelf and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
+	nameLbl.ZIndex = 11
 
-	local rowPad = Instance.new("UIPadding")
-	rowPad.Parent = row
-	rowPad.PaddingBottom = UDim.new(0, 5)
+	if isAdmin then
+		nameLbl.Text = safeUser .. " [ADMIN] · " .. fixedTime
+		nameLbl.TextColor3 = Color3.fromRGB(255, 215, 70)
+	else
+		nameLbl.Text = safeUser .. " · " .. fixedTime
+		nameLbl.TextColor3 = customColor or (isSelf and Color3.fromRGB(255, 210, 125) or Color3.fromRGB(165, 225, 255))
+	end
+
+	local bubble = Instance.new("TextButton")
+	bubble.Parent = row
+	bubble.Position = isSelf and UDim2.new(0, 4, 0, 15) or UDim2.new(0, 32, 0, 15)
+	bubble.Size = UDim2.new(1, -36, 0, 22)
+	bubble.AutomaticSize = Enum.AutomaticSize.Y
+	bubble.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	bubble.BackgroundTransparency = 0.42
+	bubble.BorderSizePixel = 0
+	bubble.Text = safeText
+	bubble.Font = Enum.Font.GothamMedium
+	bubble.TextColor3 = Color3.fromRGB(255, 255, 255)
+	bubble.TextStrokeTransparency = 0.25
+	bubble.TextSize = 11.5
+	bubble.TextWrapped = true
+	bubble.TextXAlignment = isSelf and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
+	bubble.ZIndex = 11
+	Instance.new("UICorner", bubble).CornerRadius = UDim.new(0, 8)
+
+	local bPad = Instance.new("UIPadding")
+	bPad.Parent = bubble
+	bPad.PaddingTop, bPad.PaddingBottom, bPad.PaddingLeft, bPad.PaddingRight = UDim.new(0, 4), UDim.new(0, 4), UDim.new(0, 7), UDim.new(0, 7)
+
+	local reactBadge = Instance.new("TextLabel")
+	reactBadge.Parent = row
+	reactBadge.Position = isSelf and UDim2.new(0, 8, 1, -12) or UDim2.new(1, -34, 1, -12)
+	reactBadge.Size = UDim2.new(0, 22, 0, 16)
+	reactBadge.BackgroundColor3 = Color3.fromRGB(22, 24, 34)
+	reactBadge.BackgroundTransparency = 0.25
+	reactBadge.Font = Enum.Font.GothamBold
+	reactBadge.Text = ""
+	reactBadge.TextSize = 11
+	reactBadge.Visible = false
+	reactBadge.ZIndex = 13
+	Instance.new("UICorner", reactBadge).CornerRadius = UDim.new(1, 0)
+
+	local rPad = Instance.new("UIPadding")
+	rPad.Parent = row
+	rPad.PaddingBottom = UDim.new(0, 6)
+
+	bubble.MouseButton1Click:Connect(function()
+		selectedMsgTarget = { user = safeUser, text = safeText, reactLabel = reactBadge }
+		ActionSheet.Visible = true
+	end)
 
 	task.defer(function()
 		MsgScroll.CanvasPosition = Vector2.new(0, math.max(0, MsgScroll.AbsoluteCanvasSize.Y - MsgScroll.AbsoluteWindowSize.Y))
 	end)
 end
 
-local ChatInput = Instance.new("TextBox")
+ChatInput = Instance.new("TextBox")
 ChatInput.Parent = ChatBox
 ChatInput.Position = UDim2.new(0, 6, 1, -27)
 ChatInput.Size = UDim2.new(1, -54, 0, 22)
 ChatInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-ChatInput.BackgroundTransparency = 0.78
+ChatInput.BackgroundTransparency = 0.72
 ChatInput.Font = Enum.Font.Gotham
 ChatInput.PlaceholderText = "Nhập tin nhắn..."
 ChatInput.PlaceholderColor3 = Color3.fromRGB(205, 210, 225)
@@ -852,8 +977,13 @@ SendChatBtn.TextSize = 10
 SendChatBtn.ZIndex = 11
 Instance.new("UICorner", SendChatBtn).CornerRadius = UDim.new(0, 6)
 
-ChatPill.MouseButton1Click:Connect(function() ChatBox.Visible = not ChatBox.Visible if not ChatBox.Visible then OnlinePanel.Visible = false end end)
-HideChatBtn.MouseButton1Click:Connect(function() ChatBox.Visible = false OnlinePanel.Visible = false end)
+ChatPill.MouseButton1Click:Connect(function()
+	ChatBox.Visible = not ChatBox.Visible
+	if not ChatBox.Visible then OnlinePanel.Visible, ActionSheet.Visible, ProfileModal.Visible = false, false, false end
+end)
+HideChatBtn.MouseButton1Click:Connect(function()
+	ChatBox.Visible, OnlinePanel.Visible, ActionSheet.Visible, ProfileModal.Visible = false, false, false, false
+end)
 
 local isSending = false
 local function sendCrossChat()
@@ -864,11 +994,13 @@ local function sendCrossChat()
 	isSending = true
 	SendChatBtn.Text = "..."
 	ChatInput.Text = ""
+	local nowTs = os.time()
 	local payload = safeEncode({
 		user = (LocalPlayer and LocalPlayer.Name) or "Player",
 		displayName = (LocalPlayer and LocalPlayer.DisplayName) or ((LocalPlayer and LocalPlayer.Name) or "Player"),
 		userId = (LocalPlayer and LocalPlayer.UserId) or 0,
 		text = rawText,
+		time = nowTs,
 		server = CHAT_SERVER_TAG
 	})
 	task.spawn(function()
@@ -878,7 +1010,7 @@ local function sendCrossChat()
 		isSending = false
 		SendChatBtn.Text = "GỬI"
 		if not (ok and res and (res.StatusCode == 200 or res.Success)) then
-			appendChatLine("Hệ thống", "Gửi lỗi, thử lại sau", 0, os.time(), Color3.fromRGB(255, 110, 110))
+			appendChatLine("Hệ thống", "Gửi lỗi, thử lại sau", 0, nowTs, Color3.fromRGB(255, 110, 110))
 		end
 	end)
 end
@@ -923,9 +1055,7 @@ task.spawn(function()
 				})
 				if r and r.Body then
 					local pData = safeDecode(r.Body)
-					if type(pData) == "table" then
-						syncActiveUsers(pData.users or pData.activeUsers)
-					end
+					if type(pData) == "table" then syncActiveUsers(pData.users or pData.activeUsers) end
 				end
 			end)
 			task.wait(25)
