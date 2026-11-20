@@ -223,8 +223,7 @@ makeLbl(ChatBox, UDim2.new(0, 38, 0, 22), UDim2.new(1, -128, 0, 13), Enum.Font.G
 local OnlineToggleBtn = Instance.new("TextButton")
 OnlineToggleBtn.Parent, OnlineToggleBtn.Position, OnlineToggleBtn.Size = ChatBox, UDim2.new(1, -92, 0, 21), UDim2.new(0, 64, 0, 14)
 OnlineToggleBtn.BackgroundColor3, OnlineToggleBtn.BackgroundTransparency = Color3.fromRGB(16, 48, 32), 0.35
-OnlineToggleBtn.Font, OnlineToggleBtn.Text, OnlineToggleBtn.TextColor3, OnlineBtnTextSize = Enum.Font.GothamBold, "● 1 online ▾", Color3.fromRGB(115, 255, 175), 8.5
-OnlineToggleBtn.TextSize, OnlineToggleBtn.ZIndex = OnlineBtnTextSize, 11
+OnlineToggleBtn.Font, OnlineToggleBtn.Text, OnlineToggleBtn.TextColor3, OnlineToggleBtn.TextSize, OnlineToggleBtn.ZIndex = Enum.Font.GothamBold, "● 1 online ▾", Color3.fromRGB(115, 255, 175), 8.5, 11
 Instance.new("UICorner", OnlineToggleBtn).CornerRadius = UDim.new(1, 0)
 
 local HideChatBtn = Instance.new("TextButton")
@@ -552,7 +551,7 @@ local function formatLockedTime(ts)
 		if ok and type(dt) == "string" and #dt == 5 then return dt end
 	end
 	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
-	return (okNow and nowStr) or "01:49"
+	return (okNow and nowStr) or "01:54"
 end
 
 local msgOrder = 0
@@ -735,7 +734,8 @@ task.spawn(function()
 		end
 		local explicitNum = tonumber(payload.online or payload.onlineCount or payload.count or payload.activeCount)
 		if explicitNum and explicitNum > 0 then externalOnlineCount = explicitNum end
-		activeScriptUsers, rebuildOnlineList()
+		activeScriptUsers = fresh
+		rebuildOnlineList()
 	end
 
 	task.spawn(function()
