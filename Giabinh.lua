@@ -10,6 +10,10 @@ local LocalPlayer = Players.LocalPlayer
 for _, name in ipairs({"HiroseHubLoader", "ActiveHubNotification", "HiroseCrossChatGui"}) do
 	local old = CoreGui:FindFirstChild(name)
 	if old then pcall(function() old:Destroy() end) end
+	if LocalPlayer and LocalPlayer:FindFirstChild("PlayerGui") then
+		local oldP = LocalPlayer.PlayerGui:FindFirstChild(name)
+		if oldP then pcall(function() oldP:Destroy() end) end
+	end
 end
 
 local DISCORD_LINK = "https://discord.gg/uqhEpzXy9q"
@@ -23,9 +27,7 @@ local SCRIPTS = {
 	Divine = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/tienkhanh1/Aquavine/main/DivineHub"))()'
 }
 
-local SelectedHub = "Chilli"
-local SoundEnabled = true
-local FpsBoostEnabled = true
+local SelectedHub, SoundEnabled, FpsBoostEnabled = "Chilli", true, true
 
 local function ApplyFixLag()
 	pcall(function()
@@ -52,9 +54,7 @@ local function MakeDraggable(guiObj)
 	local dragging, dragInput, dragStart, startPos
 	guiObj.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			dragging = true
-			dragStart = input.Position
-			startPos = guiObj.Position
+			dragging, dragStart, startPos = true, input.Position, guiObj.Position
 			input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then dragging = false end
 			end)
@@ -76,9 +76,8 @@ end
 local function attachGui(gui)
 	local ok = pcall(function() gui.Parent = CoreGui end)
 	if not ok or not gui.Parent then
-		if LocalPlayer and LocalPlayer:FindFirstChildOfClass("PlayerGui") then
-			gui.Parent = LocalPlayer:FindFirstChildOfClass("PlayerGui")
-		end
+		local pg = LocalPlayer and LocalPlayer:FindFirstChildOfClass("PlayerGui")
+		if pg then gui.Parent = pg end
 	end
 end
 
@@ -213,40 +212,37 @@ SubLabel.TextStrokeTransparency = 0.25
 SubLabel.TextSize = 9
 SubLabel.TextXAlignment = Enum.TextXAlignment.Left
 SubLabel.ZIndex = 2
-local VirexCard = Instance.new("Frame")
-VirexCard.Parent = MainFrame
-VirexCard.Position = UDim2.new(0, 8, 0, 90)
-VirexCard.Size = UDim2.new(1, -16, 0, 34)
-VirexCard.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-VirexCard.BackgroundTransparency = 0.68
-VirexCard.ZIndex = 2
-Instance.new("UICorner", VirexCard).CornerRadius = UDim.new(0, 10)
+local function makeInfoCard(posY, height)
+	local f = Instance.new("Frame")
+	f.Parent = MainFrame
+	f.Position = UDim2.new(0, 8, 0, posY)
+	f.Size = UDim2.new(1, -16, 0, height)
+	f.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	f.BackgroundTransparency = 0.68
+	f.ZIndex = 2
+	Instance.new("UICorner", f).CornerRadius = UDim.new(0, 10)
+	return f
+end
 
-local VirexName = Instance.new("TextLabel")
-VirexName.Parent = VirexCard
-VirexName.Position = UDim2.new(0, 8, 0, 3)
-VirexName.Size = UDim2.new(0, 150, 0, 14)
-VirexName.BackgroundTransparency = 1
-VirexName.Font = Enum.Font.GothamBold
-VirexName.Text = "🔍 VIREX - FINDER"
-VirexName.TextColor3 = Color3.fromRGB(115, 255, 175)
-VirexName.TextStrokeTransparency = 0.25
-VirexName.TextSize = 10
-VirexName.TextXAlignment = Enum.TextXAlignment.Left
-VirexName.ZIndex = 2
+local function makeCardLabel(parent, pos, size, font, text, color, textSize, stroke)
+	local l = Instance.new("TextLabel")
+	l.Parent = parent
+	l.Position = pos
+	l.Size = size
+	l.BackgroundTransparency = 1
+	l.Font = font
+	l.Text = text
+	l.TextColor3 = color
+	l.TextStrokeTransparency = stroke or 0.25
+	l.TextSize = textSize
+	l.TextXAlignment = Enum.TextXAlignment.Left
+	l.ZIndex = 2
+	return l
+end
 
-local VirexDesc = Instance.new("TextLabel")
-VirexDesc.Parent = VirexCard
-VirexDesc.Position = UDim2.new(0, 8, 0, 17)
-VirexDesc.Size = UDim2.new(0, 150, 0, 14)
-VirexDesc.BackgroundTransparency = 1
-VirexDesc.Font = Enum.Font.Gotham
-VirexDesc.Text = "Tính năng nổi bật V13"
-VirexDesc.TextColor3 = Color3.fromRGB(235, 240, 255)
-VirexDesc.TextStrokeTransparency = 0.25
-VirexDesc.TextSize = 8
-VirexDesc.TextXAlignment = Enum.TextXAlignment.Left
-VirexDesc.ZIndex = 2
+local VirexCard = makeInfoCard(90, 34)
+makeCardLabel(VirexCard, UDim2.new(0, 8, 0, 3), UDim2.new(0, 150, 0, 14), Enum.Font.GothamBold, "🔍 VIREX - FINDER", Color3.fromRGB(115, 255, 175), 10)
+makeCardLabel(VirexCard, UDim2.new(0, 8, 0, 17), UDim2.new(0, 150, 0, 14), Enum.Font.Gotham, "Tính năng nổi bật V13", Color3.fromRGB(235, 240, 255), 8)
 
 local RateBadge = Instance.new("TextLabel")
 RateBadge.Parent = VirexCard
@@ -261,40 +257,9 @@ RateBadge.TextSize = 8
 RateBadge.ZIndex = 2
 Instance.new("UICorner", RateBadge).CornerRadius = UDim.new(1, 0)
 
-local ChatIntroCard = Instance.new("Frame")
-ChatIntroCard.Parent = MainFrame
-ChatIntroCard.Position = UDim2.new(0, 8, 0, 128)
-ChatIntroCard.Size = UDim2.new(1, -16, 0, 34)
-ChatIntroCard.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-ChatIntroCard.BackgroundTransparency = 0.68
-ChatIntroCard.ZIndex = 2
-Instance.new("UICorner", ChatIntroCard).CornerRadius = UDim.new(0, 10)
-
-local ChatIntroTitle = Instance.new("TextLabel")
-ChatIntroTitle.Parent = ChatIntroCard
-ChatIntroTitle.Position = UDim2.new(0, 8, 0, 3)
-ChatIntroTitle.Size = UDim2.new(0, 165, 0, 14)
-ChatIntroTitle.BackgroundTransparency = 1
-ChatIntroTitle.Font = Enum.Font.GothamBold
-ChatIntroTitle.Text = "🌐 CHAT TOÀN SERVER"
-ChatIntroTitle.TextColor3 = Color3.fromRGB(255, 210, 130)
-ChatIntroTitle.TextStrokeTransparency = 0.25
-ChatIntroTitle.TextSize = 10
-ChatIntroTitle.TextXAlignment = Enum.TextXAlignment.Left
-ChatIntroTitle.ZIndex = 2
-
-local ChatIntroDesc = Instance.new("TextLabel")
-ChatIntroDesc.Parent = ChatIntroCard
-ChatIntroDesc.Position = UDim2.new(0, 8, 0, 17)
-ChatIntroDesc.Size = UDim2.new(0, 175, 0, 14)
-ChatIntroDesc.BackgroundTransparency = 1
-ChatIntroDesc.Font = Enum.Font.Gotham
-ChatIntroDesc.Text = "Chat xuyên server + avatar người chơi"
-ChatIntroDesc.TextColor3 = Color3.fromRGB(235, 240, 255)
-ChatIntroDesc.TextStrokeTransparency = 0.25
-ChatIntroDesc.TextSize = 8
-ChatIntroDesc.TextXAlignment = Enum.TextXAlignment.Left
-ChatIntroDesc.ZIndex = 2
+local ChatIntroCard = makeInfoCard(128, 34)
+makeCardLabel(ChatIntroCard, UDim2.new(0, 8, 0, 3), UDim2.new(0, 165, 0, 14), Enum.Font.GothamBold, "🌐 CHAT TOÀN SERVER", Color3.fromRGB(255, 210, 130), 10)
+makeCardLabel(ChatIntroCard, UDim2.new(0, 8, 0, 17), UDim2.new(0, 175, 0, 14), Enum.Font.Gotham, "Chat xuyên server + avatar người chơi", Color3.fromRGB(235, 240, 255), 8)
 
 local ChatIntroBadge = Instance.new("TextLabel")
 ChatIntroBadge.Parent = ChatIntroCard
@@ -309,18 +274,7 @@ ChatIntroBadge.TextSize = 7.5
 ChatIntroBadge.ZIndex = 2
 Instance.new("UICorner", ChatIntroBadge).CornerRadius = UDim.new(1, 0)
 
-local Sec2Title = Instance.new("TextLabel")
-Sec2Title.Parent = MainFrame
-Sec2Title.Position = UDim2.new(0, 10, 0, 166)
-Sec2Title.Size = UDim2.new(0, 90, 0, 16)
-Sec2Title.BackgroundTransparency = 1
-Sec2Title.Font = Enum.Font.GothamBold
-Sec2Title.Text = "🎮 CHỌN HUB"
-Sec2Title.TextColor3 = Color3.fromRGB(255, 210, 130)
-Sec2Title.TextStrokeTransparency = 0.25
-Sec2Title.TextSize = 10
-Sec2Title.TextXAlignment = Enum.TextXAlignment.Left
-Sec2Title.ZIndex = 2
+makeCardLabel(MainFrame, UDim2.new(0, 10, 0, 166), UDim2.new(0, 90, 0, 16), Enum.Font.GothamBold, "🎮 CHỌN HUB", Color3.fromRGB(255, 210, 130), 10)
 
 local SoundBtn = Instance.new("TextButton")
 SoundBtn.Parent = MainFrame
@@ -387,7 +341,6 @@ local function CreateHubCard(name, pos, size, icon, title)
 	StatusPill.TextSize = 9
 	StatusPill.ZIndex = 2
 	Instance.new("UICorner", StatusPill).CornerRadius = UDim.new(0, 6)
-
 	return Card
 end
 
@@ -416,8 +369,7 @@ local function UpdateHubSelection()
 	cfg[1].StatusPill.BackgroundTransparency = 0.15
 	cfg[1].StatusPill.TextColor3 = Color3.fromRGB(255, 255, 255)
 	cfg[1].StatusPill.Text = "✓ CHỌN"
-	NameLabel.Text = cfg[4]
-	SubLabel.Text = cfg[5]
+	NameLabel.Text, SubLabel.Text = cfg[4], cfg[5]
 end
 
 ChilliCard.MouseButton1Click:Connect(function() SelectedHub = "Chilli" UpdateHubSelection() end)
@@ -425,40 +377,9 @@ VenyxCard.MouseButton1Click:Connect(function() SelectedHub = "Venyx" UpdateHubSe
 DivineCard.MouseButton1Click:Connect(function() SelectedHub = "Divine" UpdateHubSelection() end)
 UpdateHubSelection()
 
-local FpsCard = Instance.new("Frame")
-FpsCard.Parent = MainFrame
-FpsCard.Position = UDim2.new(0, 8, 0, 262)
-FpsCard.Size = UDim2.new(1, -16, 0, 32)
-FpsCard.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-FpsCard.BackgroundTransparency = 0.68
-FpsCard.ZIndex = 2
-Instance.new("UICorner", FpsCard).CornerRadius = UDim.new(0, 10)
-
-local FpsTitle = Instance.new("TextLabel")
-FpsTitle.Parent = FpsCard
-FpsTitle.Position = UDim2.new(0, 8, 0, 3)
-FpsTitle.Size = UDim2.new(0, 160, 0, 13)
-FpsTitle.BackgroundTransparency = 1
-FpsTitle.Font = Enum.Font.GothamBold
-FpsTitle.Text = "🌙 FPS Boost & Fix Lag"
-FpsTitle.TextColor3 = Color3.fromRGB(255, 210, 130)
-FpsTitle.TextStrokeTransparency = 0.25
-FpsTitle.TextSize = 10
-FpsTitle.TextXAlignment = Enum.TextXAlignment.Left
-FpsTitle.ZIndex = 2
-
-local FpsSub = Instance.new("TextLabel")
-FpsSub.Parent = FpsCard
-FpsSub.Position = UDim2.new(0, 8, 0, 16)
-FpsSub.Size = UDim2.new(0, 180, 0, 13)
-FpsSub.BackgroundTransparency = 1
-FpsSub.Font = Enum.Font.Gotham
-FpsSub.Text = "Tối ưu hóa game cực mượt"
-FpsSub.TextColor3 = Color3.fromRGB(235, 240, 255)
-FpsSub.TextStrokeTransparency = 0.25
-FpsSub.TextSize = 8
-FpsSub.TextXAlignment = Enum.TextXAlignment.Left
-FpsSub.ZIndex = 2
+local FpsCard = makeInfoCard(262, 32)
+makeCardLabel(FpsCard, UDim2.new(0, 8, 0, 3), UDim2.new(0, 160, 0, 13), Enum.Font.GothamBold, "🌙 FPS Boost & Fix Lag", Color3.fromRGB(255, 210, 130), 10)
+makeCardLabel(FpsCard, UDim2.new(0, 8, 0, 16), UDim2.new(0, 180, 0, 13), Enum.Font.Gotham, "Tối ưu hóa game cực mượt", Color3.fromRGB(235, 240, 255), 8)
 
 local FpsBtn = Instance.new("TextButton")
 FpsBtn.Parent = FpsCard
@@ -479,40 +400,9 @@ FpsBtn.MouseButton1Click:Connect(function()
 	FpsBtn.BackgroundColor3 = FpsBoostEnabled and Color3.fromRGB(32, 150, 85) or Color3.fromRGB(60, 60, 70)
 end)
 
-local DiscordCard = Instance.new("Frame")
-DiscordCard.Parent = MainFrame
-DiscordCard.Position = UDim2.new(0, 8, 0, 298)
-DiscordCard.Size = UDim2.new(1, -16, 0, 32)
-DiscordCard.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-DiscordCard.BackgroundTransparency = 0.68
-DiscordCard.ZIndex = 2
-Instance.new("UICorner", DiscordCard).CornerRadius = UDim.new(0, 10)
-
-local DiscordTitle = Instance.new("TextLabel")
-DiscordTitle.Parent = DiscordCard
-DiscordTitle.Position = UDim2.new(0, 8, 0, 3)
-DiscordTitle.Size = UDim2.new(0, 150, 0, 13)
-DiscordTitle.BackgroundTransparency = 1
-DiscordTitle.Font = Enum.Font.GothamBold
-DiscordTitle.Text = "💬 DISCORD"
-DiscordTitle.TextColor3 = Color3.fromRGB(170, 195, 255)
-DiscordTitle.TextStrokeTransparency = 0.25
-DiscordTitle.TextSize = 9
-DiscordTitle.TextXAlignment = Enum.TextXAlignment.Left
-DiscordTitle.ZIndex = 2
-
-local DiscordLinkText = Instance.new("TextLabel")
-DiscordLinkText.Parent = DiscordCard
-DiscordLinkText.Position = UDim2.new(0, 8, 0, 16)
-DiscordLinkText.Size = UDim2.new(0, 170, 0, 13)
-DiscordLinkText.BackgroundTransparency = 1
-DiscordLinkText.Font = Enum.Font.Gotham
-DiscordLinkText.Text = DISCORD_LINK
-DiscordLinkText.TextColor3 = Color3.fromRGB(235, 240, 255)
-DiscordLinkText.TextStrokeTransparency = 0.25
-DiscordLinkText.TextSize = 9
-DiscordLinkText.TextXAlignment = Enum.TextXAlignment.Left
-DiscordLinkText.ZIndex = 2
+local DiscordCard = makeInfoCard(298, 32)
+makeCardLabel(DiscordCard, UDim2.new(0, 8, 0, 3), UDim2.new(0, 150, 0, 13), Enum.Font.GothamBold, "💬 DISCORD", Color3.fromRGB(170, 195, 255), 9)
+makeCardLabel(DiscordCard, UDim2.new(0, 8, 0, 16), UDim2.new(0, 170, 0, 13), Enum.Font.Gotham, DISCORD_LINK, Color3.fromRGB(235, 240, 255), 9)
 
 local CopyBtn = Instance.new("TextButton")
 CopyBtn.Parent = DiscordCard
@@ -534,24 +424,10 @@ CopyBtn.MouseButton1Click:Connect(function()
 	CopyBtn.Text = "📋 SAO CHÉP"
 end)
 
-local WishContainer = Instance.new("Frame")
-WishContainer.Parent = MainFrame
-WishContainer.Position = UDim2.new(0, 8, 0, 334)
-WishContainer.Size = UDim2.new(1, -16, 0, 20)
-WishContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-WishContainer.BackgroundTransparency = 0.68
-WishContainer.ZIndex = 2
-Instance.new("UICorner", WishContainer).CornerRadius = UDim.new(0, 8)
-
-local WishLabel = Instance.new("TextLabel")
-WishLabel.Parent = WishContainer
-WishLabel.Size = UDim2.new(1, 0, 1, 0)
-WishLabel.BackgroundTransparency = 1
-WishLabel.Font = Enum.Font.GothamBold
-WishLabel.Text = "✨ CHÚC BẠN CHƠI GAME VUI VẺ 👉👈"
-WishLabel.TextColor3 = Color3.fromRGB(255, 210, 130)
-WishLabel.TextStrokeTransparency = 0.25
-WishLabel.TextSize = 9
+local WishContainer = makeInfoCard(334, 20)
+WishContainer.UICorner.CornerRadius = UDim.new(0, 8)
+local WishLabel = makeCardLabel(WishContainer, UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 1, 0), Enum.Font.GothamBold, "✨ CHÚC BẠN CHƠI GAME VUI VẺ 👉👈", Color3.fromRGB(255, 210, 130), 9)
+WishLabel.TextXAlignment = Enum.TextXAlignment.Center
 WishLabel.ZIndex = 3
 local reqFunc = (syn and syn.request) or (http and http.request) or request or http_request
 
@@ -1201,20 +1077,13 @@ RunBtn.MouseButton1Click:Connect(function()
 		if isMinimized then
 			ToggleBtn.Text = "▼"
 			TweenService:Create(NotifFrame, TweenInfo.new(0.2), {Size = UDim2.new(0, 160, 0, 32)}):Play()
-			NotifTitle.Visible = false
-			NotifSub.Visible = false
-			NotifDetail.Visible = false
-			IconContainer.Visible = false
-			MinimizeText.Visible = true
+			NotifTitle.Visible, NotifSub.Visible, NotifDetail.Visible, IconContainer.Visible, MinimizeText.Visible = false, false, false, false, true
 		else
 			ToggleBtn.Text = "▲"
 			TweenService:Create(NotifFrame, TweenInfo.new(0.2), {Size = UDim2.new(0, 240, 0, 56)}):Play()
 			MinimizeText.Visible = false
 			task.wait(0.1)
-			NotifTitle.Visible = true
-			NotifSub.Visible = true
-			NotifDetail.Visible = true
-			IconContainer.Visible = true
+			NotifTitle.Visible, NotifSub.Visible, NotifDetail.Visible, IconContainer.Visible = true, true, true, true
 		end
 	end)
 
