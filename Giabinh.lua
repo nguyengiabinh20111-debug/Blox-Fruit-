@@ -486,25 +486,25 @@ ChatBg.BackgroundTransparency = 1
 ChatBg.ZIndex = 9
 Instance.new("UICorner", ChatBg).CornerRadius = UDim.new(0, 12)
 
-local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 4), UDim2.new(0, 166, 0, 20), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 12)
-ChatAuthorLabel.ZIndex = 11
-
 local AuthorAfterIcon = Instance.new("ImageLabel")
 AuthorAfterIcon.Parent = ChatBox
-AuthorAfterIcon.Position = UDim2.new(0, 175, 0, 2)
-AuthorAfterIcon.Size = UDim2.new(0, 24, 0, 24)
+AuthorAfterIcon.Position = UDim2.new(0, 6, 0, 2)
+AuthorAfterIcon.Size = UDim2.new(0, 18, 0, 18)
 AuthorAfterIcon.BackgroundTransparency = 1
 AuthorAfterIcon.Image = CUSTOM_ICON_ASSET
 AuthorAfterIcon.ScaleType = Enum.ScaleType.Crop
 AuthorAfterIcon.ZIndex = 11
 Instance.new("UICorner", AuthorAfterIcon).CornerRadius = UDim.new(1, 0)
 
-local ChatDiscordSub = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 24), UDim2.new(1, -98, 0, 13), Enum.Font.GothamMedium, DISCORD_LINK, Color3.fromRGB(170, 195, 255), 8.5)
+local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 28, 0, 2), UDim2.new(1, -56, 0, 18), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 12)
+ChatAuthorLabel.ZIndex = 11
+
+local ChatDiscordSub = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 22), UDim2.new(1, -98, 0, 13), Enum.Font.GothamMedium, DISCORD_LINK, Color3.fromRGB(170, 195, 255), 8.5)
 ChatDiscordSub.ZIndex = 11
 
 local OnlineToggleBtn = Instance.new("TextButton")
 OnlineToggleBtn.Parent = ChatBox
-OnlineToggleBtn.Position = UDim2.new(1, -92, 0, 23)
+OnlineToggleBtn.Position = UDim2.new(1, -92, 0, 21)
 OnlineToggleBtn.Size = UDim2.new(0, 64, 0, 14)
 OnlineToggleBtn.BackgroundColor3 = Color3.fromRGB(16, 48, 32)
 OnlineToggleBtn.BackgroundTransparency = 0.35
@@ -530,8 +530,8 @@ Instance.new("UICorner", HideChatBtn).CornerRadius = UDim.new(0, 5)
 
 local MsgScroll = Instance.new("ScrollingFrame")
 MsgScroll.Parent = ChatBox
-MsgScroll.Position = UDim2.new(0, 6, 0, 40)
-MsgScroll.Size = UDim2.new(1, -12, 1, -74)
+MsgScroll.Position = UDim2.new(0, 6, 0, 38)
+MsgScroll.Size = UDim2.new(1, -12, 1, -72)
 MsgScroll.BackgroundTransparency = 1
 MsgScroll.BorderSizePixel = 0
 MsgScroll.ScrollBarThickness = 3
@@ -550,8 +550,8 @@ MsgPad.PaddingTop, MsgPad.PaddingBottom, MsgPad.PaddingLeft, MsgPad.PaddingRight
 
 local OnlinePanel = Instance.new("Frame")
 OnlinePanel.Parent = ChatBox
-OnlinePanel.Position = UDim2.new(0, 6, 0, 40)
-OnlinePanel.Size = UDim2.new(1, -12, 1, -46)
+OnlinePanel.Position = UDim2.new(0, 6, 0, 38)
+OnlinePanel.Size = UDim2.new(1, -12, 1, -44)
 OnlinePanel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 OnlinePanel.BackgroundTransparency = 0.14
 OnlinePanel.BorderSizePixel = 0
@@ -899,7 +899,7 @@ local function formatLockedTime(ts)
 		if ok and type(dt) == "string" and #dt == 5 then return dt end
 	end
 	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
-	return (okNow and nowStr) or "23:40"
+	return (okNow and nowStr) or "23:47"
 end
 
 local msgOrder = 0
@@ -1111,6 +1111,7 @@ task.spawn(function()
 			end
 		end
 		MsgScroll.CanvasPosition = Vector2.new(0, 0)
+		appendChatLine("Hệ thống", "Mỗi phút hệ thống sẽ tự xoá toàn bộ tin nhắn!", 0, os.time(), Color3.fromRGB(255, 210, 130))
 	end
 end)
 
