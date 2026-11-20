@@ -5,6 +5,7 @@ local Lighting = game:GetService("Lighting")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local MarketplaceService = game:GetService("MarketplaceService")
+local StarterGui = game:GetService("StarterGui")
 local Terrain = workspace:FindFirstChildOfClass("Terrain")
 local LocalPlayer = Players.LocalPlayer
 
@@ -488,18 +489,18 @@ Instance.new("UICorner", ChatBg).CornerRadius = UDim.new(0, 12)
 
 local AuthorAfterIcon = Instance.new("ImageLabel")
 AuthorAfterIcon.Parent = ChatBox
-AuthorAfterIcon.Position = UDim2.new(0, 6, 0, 2)
-AuthorAfterIcon.Size = UDim2.new(0, 18, 0, 18)
+AuthorAfterIcon.Position = UDim2.new(0, 5, 0, 1)
+AuthorAfterIcon.Size = UDim2.new(0, 26, 0, 26)
 AuthorAfterIcon.BackgroundTransparency = 1
 AuthorAfterIcon.Image = CUSTOM_ICON_ASSET
 AuthorAfterIcon.ScaleType = Enum.ScaleType.Crop
 AuthorAfterIcon.ZIndex = 11
 Instance.new("UICorner", AuthorAfterIcon).CornerRadius = UDim.new(1, 0)
 
-local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 28, 0, 2), UDim2.new(1, -56, 0, 18), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 12)
+local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 35, 0, 4), UDim2.new(1, -63, 0, 18), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 12)
 ChatAuthorLabel.ZIndex = 11
 
-local ChatDiscordSub = makeCardLabel(ChatBox, UDim2.new(0, 8, 0, 22), UDim2.new(1, -98, 0, 13), Enum.Font.GothamMedium, DISCORD_LINK, Color3.fromRGB(170, 195, 255), 8.5)
+local ChatDiscordSub = makeCardLabel(ChatBox, UDim2.new(0, 35, 0, 22), UDim2.new(1, -125, 0, 13), Enum.Font.GothamMedium, DISCORD_LINK, Color3.fromRGB(170, 195, 255), 8.5)
 ChatDiscordSub.ZIndex = 11
 
 local OnlineToggleBtn = Instance.new("TextButton")
@@ -537,6 +538,7 @@ MsgScroll.BorderSizePixel = 0
 MsgScroll.ScrollBarThickness = 3
 MsgScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 MsgScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+MsgScroll.Visible = false
 MsgScroll.ZIndex = 10
 
 local MsgLayout = Instance.new("UIListLayout")
@@ -547,6 +549,11 @@ MsgLayout.Padding = UDim.new(0, 6)
 local MsgPad = Instance.new("UIPadding")
 MsgPad.Parent = MsgScroll
 MsgPad.PaddingTop, MsgPad.PaddingBottom, MsgPad.PaddingLeft, MsgPad.PaddingRight = UDim.new(0, 4), UDim.new(0, 4), UDim.new(0, 4), UDim.new(0, 4)
+
+local LockedChatNotice = makeCardLabel(ChatBox, UDim2.new(0, 12, 0.42, 0), UDim2.new(1, -24, 0, 36), Enum.Font.GothamBold, "🔒 Chưa có tin nhắn mới.\nKhi có người nhắn, tin nhắn sẽ hiện!", Color3.fromRGB(255, 225, 150), 10)
+LockedChatNotice.TextXAlignment = Enum.TextXAlignment.Center
+LockedChatNotice.TextWrapped = true
+LockedChatNotice.ZIndex = 11
 
 local OnlinePanel = Instance.new("Frame")
 OnlinePanel.Parent = ChatBox
@@ -592,14 +599,15 @@ OnlineLayout.Parent = OnlineScroll
 OnlineLayout.SortOrder = Enum.SortOrder.LayoutOrder
 OnlineLayout.Padding = UDim.new(0, 4)
 local avatarCache, userIdCache, activeScriptUsers = {}, {}, {}
-local currentGameName = "Roblox"
+local hasSeenFirstMessage = false
 
-task.spawn(function()
-	local ok, info = pcall(function() return MarketplaceService:GetProductInfoAsync(game.PlaceId) end)
-	if ok and info and type(info.Name) == "string" and info.Name ~= "" then
-		currentGameName = info.Name
+local function unlockChatStream()
+	if not hasSeenFirstMessage then
+		hasSeenFirstMessage = true
+		LockedChatNotice.Visible = false
+		MsgScroll.Visible = true
 	end
-end)
+end
 
 local function resolveUserId(username, userId)
 	local idNum = tonumber(userId)
@@ -635,106 +643,35 @@ local function applyAvatarAsync(avatarImg, username, userId)
 	end)
 end
 
-local ProfileModal = Instance.new("Frame")
-ProfileModal.Parent = ChatBox
-ProfileModal.Position = UDim2.new(0, 6, 0.11, 0)
-ProfileModal.Size = UDim2.new(0, 218, 0, 266)
-ProfileModal.BackgroundColor3 = Color3.fromRGB(16, 17, 24)
-ProfileModal.BackgroundTransparency = 0.08
-ProfileModal.BorderSizePixel = 0
-ProfileModal.Visible = false
-ProfileModal.ZIndex = 20
-Instance.new("UICorner", ProfileModal).CornerRadius = UDim.new(0, 12)
-
-local CornerBadgeIcon = Instance.new("ImageLabel")
-CornerBadgeIcon.Parent = ProfileModal
-CornerBadgeIcon.Position = UDim2.new(0, 8, 0, 8)
-CornerBadgeIcon.Size = UDim2.new(0, 20, 0, 20)
-CornerBadgeIcon.BackgroundTransparency = 1
-CornerBadgeIcon.Image = CUSTOM_ICON_ASSET
-CornerBadgeIcon.ScaleType = Enum.ScaleType.Crop
-CornerBadgeIcon.ZIndex = 21
-Instance.new("UICorner", CornerBadgeIcon).CornerRadius = UDim.new(1, 0)
-
-local CloseProfileBtn = Instance.new("TextButton")
-CloseProfileBtn.Parent = ProfileModal
-CloseProfileBtn.Position = UDim2.new(1, -24, 0, 6)
-CloseProfileBtn.Size = UDim2.new(0, 18, 0, 18)
-CloseProfileBtn.BackgroundColor3 = Color3.fromRGB(220, 65, 65)
-CloseProfileBtn.Font = Enum.Font.GothamBold
-CloseProfileBtn.Text = "X"
-CloseProfileBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseProfileBtn.TextSize = 9
-CloseProfileBtn.ZIndex = 21
-Instance.new("UICorner", CloseProfileBtn).CornerRadius = UDim.new(1, 0)
-CloseProfileBtn.MouseButton1Click:Connect(function() ProfileModal.Visible = false end)
-
-local BigAvatar = Instance.new("ImageLabel")
-BigAvatar.Parent = ProfileModal
-BigAvatar.AnchorPoint = Vector2.new(0.5, 0)
-BigAvatar.Position = UDim2.new(0.5, 0, 0, 12)
-BigAvatar.Size = UDim2.new(0, 62, 0, 62)
-BigAvatar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-BigAvatar.BackgroundTransparency = 0.5
-BigAvatar.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
-BigAvatar.ScaleType = Enum.ScaleType.Crop
-BigAvatar.ZIndex = 21
-Instance.new("UICorner", BigAvatar).CornerRadius = UDim.new(1, 0)
-
-local ProfileCurrentName = makeCardLabel(ProfileModal, UDim2.new(0, 10, 0, 78), UDim2.new(1, -20, 0, 16), Enum.Font.GothamBold, "", Color3.fromRGB(255, 220, 120), 11.5)
-ProfileCurrentName.TextXAlignment = Enum.TextXAlignment.Center
-ProfileCurrentName.ZIndex = 21
-
-local ProfileHandleName = makeCardLabel(ProfileModal, UDim2.new(0, 10, 0, 94), UDim2.new(1, -20, 0, 13), Enum.Font.Gotham, "", Color3.fromRGB(185, 200, 225), 9)
-ProfileHandleName.TextXAlignment = Enum.TextXAlignment.Center
-ProfileHandleName.ZIndex = 21
-
-local ProfileInfoBody = makeCardLabel(ProfileModal, UDim2.new(0, 12, 0, 114), UDim2.new(1, -24, 0, 142), Enum.Font.GothamMedium, "", Color3.fromRGB(240, 244, 255), 10)
-ProfileInfoBody.TextWrapped = true
-ProfileInfoBody.TextYAlignment = Enum.TextYAlignment.Top
-ProfileInfoBody.ZIndex = 21
-
-local function openUserProfile(rawUser, userId)
-	local uname = tostring(rawUser or "Player")
-	local plr = Players:FindFirstChild(uname)
-	local curName = (plr and plr.DisplayName) or uname
-	local resolvedId = resolveUserId(uname, userId) or 0
-	BigAvatar.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
-	applyAvatarAsync(BigAvatar, uname, resolvedId)
-	ProfileCurrentName.Text = curName
-	ProfileHandleName.Text = "@" .. uname
-	ProfileInfoBody.Text = "Tên: " .. curName .. "\nId: " .. tostring(resolvedId) .. "\nNgày tạo: Đang tải...\nThời gian: Đang tải...\nGame: " .. tostring(currentGameName)
-	ProfileModal.Visible = true
-	if resolvedId > 0 and reqFunc then
+local function sendRemoteFriendRequest(targetUser, targetId)
+	local resolvedId = resolveUserId(targetUser, targetId)
+	if not resolvedId or resolvedId <= 0 then return end
+	local targetPlr = Players:GetPlayerByUserId(resolvedId) or Players:FindFirstChild(tostring(targetUser or ""))
+	if targetPlr and LocalPlayer then
+		pcall(function() LocalPlayer:RequestFriendship(targetPlr) end)
+		pcall(function() StarterGui:SetCore("PromptSendFriendRequest", targetPlr) end)
+	end
+	local reqFunc = (syn and syn.request) or (http and http.request) or request or http_request
+	if reqFunc then
 		task.spawn(function()
-			local ok, res = pcall(function()
-				return reqFunc({ Url = "https://users.roblox.com/v1/users/" .. tostring(resolvedId), Method = "GET" })
+			pcall(function()
+				reqFunc({
+					Url = "https://friends.roblox.com/v1/users/" .. tostring(resolvedId) .. "/request-friendship",
+					Method = "POST",
+					Headers = { ["Content-Type"] = "application/json" },
+					Body = HttpService:JSONEncode({ friendshipOriginSourceType = "PlayerSearch" })
+				})
 			end)
-			local d = ok and res and safeDecode(res.Body)
-			if type(d) == "table" and type(d.created) == "string" then
-				local y, m, day = d.created:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)")
-				local dateStr = (y and m and day) and (day .. "/" .. m .. "/" .. y) or d.created
-				local ageStr = "Không rõ"
-				if y and m and day then
-					local createdTs = os.time({ year = tonumber(y), month = tonumber(m), day = tonumber(day), hour = 0, min = 0, sec = 0 })
-					if createdTs and os.time() >= createdTs then
-						ageStr = tostring(math.floor((os.time() - createdTs) / 86400)) .. " ngày"
-					end
-				end
-				if ProfileModal.Visible then
-					ProfileInfoBody.Text = "Tên: " .. curName .. "\nId: " .. tostring(resolvedId) .. "\nNgày tạo: " .. dateStr .. "\nThời gian: " .. ageStr .. "\nGame: " .. tostring(currentGameName)
-				end
-			end
 		end)
 	end
 end
 
 local ActionSheet = Instance.new("Frame")
 ActionSheet.Parent = ChatBox
-ActionSheet.Position = UDim2.new(0, 8, 0.42, 0)
-ActionSheet.Size = UDim2.new(1, -16, 0, 88)
+ActionSheet.Position = UDim2.new(0, 6, 0.41, 0)
+ActionSheet.Size = UDim2.new(1, -12, 0, 92)
 ActionSheet.BackgroundColor3 = Color3.fromRGB(20, 16, 30)
-ActionSheet.BackgroundTransparency = 0.08
+ActionSheet.BackgroundTransparency = 0.06
 ActionSheet.BorderSizePixel = 0
 ActionSheet.Visible = false
 ActionSheet.ZIndex = 19
@@ -758,27 +695,33 @@ local function makeSheetBtn(parent, pos, size, bg, text)
 	b.Font = Enum.Font.GothamBold
 	b.Text = text
 	b.TextColor3 = Color3.fromRGB(255, 255, 255)
-	b.TextSize = 9.5
+	b.TextSize = 8.5
 	b.ZIndex = 20
 	Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6)
 	return b
 end
 
-makeSheetBtn(ActionSheet, UDim2.new(0, 6, 0, 6), UDim2.new(0.5, -9, 0, 26), Color3.fromRGB(42, 45, 58), "📋 Chép").MouseButton1Click:Connect(function()
+makeSheetBtn(ActionSheet, UDim2.new(0, 5, 0, 6), UDim2.new(0.32, -4, 0, 26), Color3.fromRGB(42, 45, 58), "📋 Chép").MouseButton1Click:Connect(function()
 	if selectedMsgTarget and setclipboard then pcall(setclipboard, tostring(selectedMsgTarget.text or "")) end
 	ActionSheet.Visible = false
 end)
-makeSheetBtn(ActionSheet, UDim2.new(0.5, 3, 0, 6), UDim2.new(0.5, -9, 0, 26), Color3.fromRGB(235, 110, 45), "↩ Trả lời").MouseButton1Click:Connect(function()
+makeSheetBtn(ActionSheet, UDim2.new(0.34, 0, 0, 6), UDim2.new(0.32, -4, 0, 26), Color3.fromRGB(235, 110, 45), "↩ Trả lời").MouseButton1Click:Connect(function()
 	if selectedMsgTarget then setReplyMode(selectedMsgTarget) end
+	ActionSheet.Visible = false
+end)
+makeSheetBtn(ActionSheet, UDim2.new(0.68, 0, 0, 6), UDim2.new(0.32, -5, 0, 26), Color3.fromRGB(36, 150, 92), "🤝 Kết bạn").MouseButton1Click:Connect(function()
+	if selectedMsgTarget then
+		sendRemoteFriendRequest(selectedMsgTarget.user, selectedMsgTarget.userId)
+	end
 	ActionSheet.Visible = false
 end)
 
 local ReactionDock = Instance.new("Frame")
 ReactionDock.Parent = ActionSheet
-ReactionDock.Position = UDim2.new(0, 6, 0, 40)
-ReactionDock.Size = UDim2.new(1, -34, 0, 38)
+ReactionDock.Position = UDim2.new(0, 5, 0, 40)
+ReactionDock.Size = UDim2.new(1, -31, 0, 42)
 ReactionDock.BackgroundColor3 = Color3.fromRGB(34, 24, 48)
-ReactionDock.BackgroundTransparency = 0.1
+ReactionDock.BackgroundTransparency = 0.08
 ReactionDock.ZIndex = 20
 Instance.new("UICorner", ReactionDock).CornerRadius = UDim.new(1, 0)
 
@@ -792,6 +735,7 @@ EmojiScroll.ScrollBarThickness = 2
 EmojiScroll.ScrollingDirection = Enum.ScrollingDirection.X
 EmojiScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 EmojiScroll.AutomaticCanvasSize = Enum.AutomaticSize.X
+EmojiScroll.Active = true
 EmojiScroll.ZIndex = 21
 
 local EmojiLayout = Instance.new("UIListLayout")
@@ -800,18 +744,40 @@ EmojiLayout.FillDirection = Enum.FillDirection.Horizontal
 EmojiLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 EmojiLayout.Padding = UDim.new(0, 5)
 
-local emojis = {"❤️", "😂", "😮", "😢", "👍", "🔥", "🥰", "😭", "😡", "🎉", "💯", "✨", "🤡", "🤝"}
+local swipeDragging, swipeStartX, swipeStartCanvasX = false, 0, 0
+EmojiScroll.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		swipeDragging = true
+		swipeStartX = input.Position.X
+		swipeStartCanvasX = EmojiScroll.CanvasPosition.X
+	end
+end)
+EmojiScroll.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		swipeDragging = false
+	end
+end)
+UserInputService.InputChanged:Connect(function(input)
+	if swipeDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+		local deltaX = input.Position.X - swipeStartX
+		local maxX = math.max(0, EmojiScroll.AbsoluteCanvasSize.X - EmojiScroll.AbsoluteWindowSize.X)
+		local nextX = math.clamp(swipeStartCanvasX - deltaX * 1.25, 0, maxX)
+		EmojiScroll.CanvasPosition = Vector2.new(nextX, 0)
+	end
+end)
+
+local emojis = {"❤️", "😂", "😮", "😢", "👍", "🔥", "🥰", "😭", "😡", "🎉", "💯", "✨", "🤡", "🤝", "💔", "🤩"}
 for i, em in ipairs(emojis) do
 	local eb = Instance.new("TextButton")
 	eb.Parent = EmojiScroll
 	eb.LayoutOrder = i
-	eb.Size = UDim2.new(0, 26, 0, 26)
+	eb.Size = UDim2.new(0, 28, 0, 28)
 	eb.BackgroundColor3 = Color3.fromRGB(52, 36, 72)
-	eb.BackgroundTransparency = 0.2
+	eb.BackgroundTransparency = 0.15
 	eb.Font = Enum.Font.GothamBold
 	eb.Text = em
 	eb.TextColor3 = Color3.fromRGB(255, 255, 255)
-	eb.TextSize = 13
+	eb.TextSize = 13.5
 	eb.ZIndex = 22
 	Instance.new("UICorner", eb).CornerRadius = UDim.new(1, 0)
 	eb.MouseButton1Click:Connect(function()
@@ -825,8 +791,8 @@ end
 
 local closeDockBtn = Instance.new("TextButton")
 closeDockBtn.Parent = ActionSheet
-closeDockBtn.Position = UDim2.new(1, -26, 0, 46)
-closeDockBtn.Size = UDim2.new(0, 20, 0, 26)
+closeDockBtn.Position = UDim2.new(1, -24, 0, 48)
+closeDockBtn.Size = UDim2.new(0, 19, 0, 26)
 closeDockBtn.BackgroundColor3 = Color3.fromRGB(185, 55, 75)
 closeDockBtn.Font = Enum.Font.GothamBold
 closeDockBtn.Text = "X"
@@ -864,7 +830,7 @@ local function rebuildOnlineList()
 		av.ZIndex = 17
 		Instance.new("UICorner", av).CornerRadius = UDim.new(1, 0)
 		applyAvatarAsync(av, info.realName, info.userId)
-		av.MouseButton1Click:Connect(function() openUserProfile(info.realName, info.userId) end)
+		av.MouseButton1Click:Connect(function() sendRemoteFriendRequest(info.realName, info.userId) end)
 
 		local editedLbl = makeCardLabel(item, UDim2.new(0, 34, 0, 3), UDim2.new(1, -40, 0, 14), Enum.Font.GothamBold, tostring(info.editedName or info.realName), Color3.fromRGB(255, 255, 255), 10.5)
 		editedLbl.ZIndex = 17
@@ -899,14 +865,18 @@ local function formatLockedTime(ts)
 		if ok and type(dt) == "string" and #dt == 5 then return dt end
 	end
 	local okNow, nowStr = pcall(function() return os.date("%H:%M") end)
-	return (okNow and nowStr) or "23:47"
+	return (okNow and nowStr) or "23:58"
 end
 
 local msgOrder = 0
-local function appendChatLine(username, text, userId, timestamp, customColor)
+local function appendChatLine(username, text, userId, timestamp, customColor, shouldUnlock, autoCopyText)
+	if shouldUnlock then
+		unlockChatStream()
+	end
 	msgOrder += 1
 	local safeUser = tostring(username or "Player")
 	local safeText = tostring(text or "")
+	local safeId = tonumber(userId) or 0
 	local myName = (LocalPlayer and LocalPlayer.Name) or ""
 	local isSelf = (myName ~= "" and safeUser == myName)
 	local isAdmin = (safeUser == ADMIN_ROBLOX_USERNAME)
@@ -932,8 +902,10 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	avatarImg.ScaleType = Enum.ScaleType.Crop
 	avatarImg.ZIndex = 12
 	Instance.new("UICorner", avatarImg).CornerRadius = UDim.new(1, 0)
-	applyAvatarAsync(avatarImg, safeUser, userId)
-	avatarImg.MouseButton1Click:Connect(function() openUserProfile(safeUser, userId) end)
+	applyAvatarAsync(avatarImg, safeUser, safeId)
+	avatarImg.MouseButton1Click:Connect(function()
+		sendRemoteFriendRequest(safeUser, safeId)
+	end)
 
 	local nameLbl = Instance.new("TextLabel")
 	nameLbl.Parent = row
@@ -1014,7 +986,14 @@ local function appendChatLine(username, text, userId, timestamp, customColor)
 	rPad.PaddingBottom = UDim.new(0, 4)
 
 	bubble.MouseButton1Click:Connect(function()
-		selectedMsgTarget = { user = safeUser, text = safeText, reactLabel = reactBadge }
+		if autoCopyText and setclipboard then
+			pcall(setclipboard, autoCopyText)
+			bubble.Text = "✓ Đã chép: " .. autoCopyText
+			task.wait(1.2)
+			if bubble and bubble.Parent then bubble.Text = safeText end
+			return
+		end
+		selectedMsgTarget = { user = safeUser, text = safeText, userId = safeId, reactLabel = reactBadge }
 		ActionSheet.Visible = true
 	end)
 
@@ -1058,7 +1037,7 @@ local function openChatBox()
 end
 local function closeChatBox()
 	ChatBox.Visible = false
-	OnlinePanel.Visible, ActionSheet.Visible, ProfileModal.Visible = false, false, false
+	OnlinePanel.Visible, ActionSheet.Visible = false, false
 	ChatPill.Visible = true
 end
 
@@ -1074,6 +1053,7 @@ local function sendCrossChat()
 	isSending = true
 	SendChatBtn.Text = "..."
 	ChatInput.Text = ""
+	unlockChatStream()
 	local nowTs = os.time()
 	local payload = safeEncode({
 		user = (LocalPlayer and LocalPlayer.Name) or "Player",
@@ -1090,7 +1070,7 @@ local function sendCrossChat()
 		isSending = false
 		SendChatBtn.Text = "GỬI"
 		if not (ok and res and (res.StatusCode == 200 or res.Success)) then
-			appendChatLine("Hệ thống", "Gửi lỗi, thử lại sau", 0, nowTs, Color3.fromRGB(255, 110, 110))
+			appendChatLine("Hệ thống", "Gửi lỗi, thử lại sau", 0, nowTs, Color3.fromRGB(255, 110, 110), true)
 		end
 	end)
 end
@@ -1104,6 +1084,13 @@ local clearCycleSignal = 0
 task.spawn(function()
 	while ChatGui and ChatGui.Parent do
 		task.wait(60)
+		appendChatLine("Hệ thống", DISCORD_LINK, 0, os.time(), Color3.fromRGB(170, 195, 255), true, DISCORD_LINK)
+	end
+end)
+
+task.spawn(function()
+	while ChatGui and ChatGui.Parent do
+		task.wait(180)
 		clearCycleSignal += 1
 		for _, child in ipairs(MsgScroll:GetChildren()) do
 			if child:IsA("Frame") then
@@ -1111,7 +1098,7 @@ task.spawn(function()
 			end
 		end
 		MsgScroll.CanvasPosition = Vector2.new(0, 0)
-		appendChatLine("Hệ thống", "Mỗi phút hệ thống sẽ tự xoá toàn bộ tin nhắn!", 0, os.time(), Color3.fromRGB(255, 210, 130))
+		appendChatLine("Hệ thống", "Mỗi 3 phút hệ thống sẽ tự xoá toàn bộ tin nhắn!", 0, os.time(), Color3.fromRGB(255, 210, 130), true)
 	end
 end)
 
@@ -1121,7 +1108,6 @@ task.spawn(function()
 	local myDisplay = (LocalPlayer and LocalPlayer.DisplayName) or myUser
 	local myId = (LocalPlayer and LocalPlayer.UserId) or 0
 	registerScriptUser(myUser, myDisplay, myId)
-	appendChatLine("Hirose x Miyanno", "Đã kết nối chat xuyên server!", 0, os.time(), Color3.fromRGB(110, 255, 175))
 
 	local function syncActiveUsers(listData)
 		if type(listData) ~= "table" then return end
@@ -1158,6 +1144,7 @@ task.spawn(function()
 		end
 	end)
 
+	local seededInitialHistory = false
 	while true do
 		local seenClearAtStart = clearCycleSignal
 		local url = CHAT_API_URL .. "/messages" .. (lastMsgId > 0 and ("?after=" .. tostring(lastMsgId)) or "")
@@ -1171,11 +1158,12 @@ task.spawn(function()
 						local mid = tonumber(m.id) or 0
 						if mid > lastMsgId then
 							lastMsgId = mid
-							if seenClearAtStart == clearCycleSignal then
-								appendChatLine(tostring(m.user or "Player"), tostring(m.text or ""), m.userId, m.time or m.timestamp or m.createdAt)
+							if seededInitialHistory and seenClearAtStart == clearCycleSignal then
+								appendChatLine(tostring(m.user or "Player"), tostring(m.text or ""), m.userId, m.time or m.timestamp or m.createdAt, nil, true)
 							end
 						end
 					end
+					seededInitialHistory = true
 				end
 			end
 		end
