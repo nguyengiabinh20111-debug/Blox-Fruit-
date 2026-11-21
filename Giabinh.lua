@@ -182,7 +182,7 @@ AuthorLabel.Position = UDim2.new(0, 42, 0, 3)
 AuthorLabel.Size = UDim2.new(1, -50, 0, 16)
 AuthorLabel.BackgroundTransparency = 1
 AuthorLabel.Font = Enum.Font.GothamBold
-AuthorLabel.Text = "Tác giả: Hirose x Miyanno"
+AuthorLabel.Text = "Tác giả: Hirose x Miyano"
 AuthorLabel.TextColor3 = Color3.fromRGB(255, 210, 130)
 AuthorLabel.TextStrokeTransparency = 0.2
 AuthorLabel.TextSize = 12.5
@@ -496,7 +496,7 @@ AuthorAfterIcon.ScaleType = Enum.ScaleType.Crop
 AuthorAfterIcon.ZIndex = 11
 Instance.new("UICorner", AuthorAfterIcon).CornerRadius = UDim.new(1, 0)
 
-local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 35, 0, 4), UDim2.new(1, -63, 0, 18), Enum.Font.GothamBold, "Tác giả: Hirose x Miyanno", Color3.fromRGB(255, 210, 130), 12)
+local ChatAuthorLabel = makeCardLabel(ChatBox, UDim2.new(0, 35, 0, 4), UDim2.new(1, -63, 0, 18), Enum.Font.GothamBold, "Tác giả: Hirose x Miyano", Color3.fromRGB(255, 210, 130), 12)
 ChatAuthorLabel.ZIndex = 11
 
 local ChatDiscordSub = makeCardLabel(ChatBox, UDim2.new(0, 35, 0, 22), UDim2.new(1, -125, 0, 13), Enum.Font.GothamMedium, DISCORD_LINK, Color3.fromRGB(170, 195, 255), 8.5)
@@ -613,7 +613,7 @@ local function resolveUserId(username, userId)
 	local idNum = tonumber(userId)
 	if idNum and idNum > 0 then return idNum end
 	local uname = tostring(username or "")
-	if uname == "" or uname == "Player" or uname == "Hệ thống" or uname == "Hirose x Miyanno" then return nil end
+	if uname == "" or uname == "Player" or uname == "Hệ thống" or uname == "Hirose x Miyano" then return nil end
 	if userIdCache[uname] then return userIdCache[uname] end
 	local plr = Players:FindFirstChild(uname)
 	if plr and plr.UserId > 0 then userIdCache[uname] = plr.UserId return plr.UserId end
@@ -844,7 +844,7 @@ end
 
 local function registerScriptUser(realName, editedName, userId)
 	local rName = tostring(realName or "")
-	if rName == "" or rName == "Player" or rName == "Hệ thống" or rName == "Hirose x Miyanno" then return end
+	if rName == "" or rName == "Player" or rName == "Hệ thống" or rName == "Hirose x Miyano" then return end
 	local eName = tostring(editedName or "")
 	if eName == "" then
 		local plr = Players:FindFirstChild(rName)
@@ -1389,7 +1389,7 @@ RunBtn.MouseButton1Click:Connect(function()
 	NotifSub.Size = UDim2.new(1, -75, 0, 14)
 	NotifSub.BackgroundTransparency = 1
 	NotifSub.Font = Enum.Font.GothamBold
-	NotifSub.Text = "👤 Tác giả: Hirose x Miyanno | 💬 Bấm copy link"
+	NotifSub.Text = "👤 Tác giả: Hirose x Miyano | 💬 Bấm copy link"
 	NotifSub.TextColor3 = Color3.fromRGB(255, 100, 100)
 	NotifSub.TextSize = 7.5
 	NotifSub.TextXAlignment = Enum.TextXAlignment.Left
@@ -1421,7 +1421,7 @@ RunBtn.MouseButton1Click:Connect(function()
 	MinimizeText.Size = UDim2.new(1, -44, 1, 0)
 	MinimizeText.BackgroundTransparency = 1
 	MinimizeText.Font = Enum.Font.GothamBold
-	MinimizeText.Text = "Tác Giả: Hirose x Miyanno"
+	MinimizeText.Text = "Tác Giả: Hirose x Miyano"
 	MinimizeText.TextColor3 = Color3.fromRGB(255, 120, 120)
 	MinimizeText.TextSize = 9
 	MinimizeText.TextXAlignment = Enum.TextXAlignment.Left
