@@ -83,7 +83,6 @@ local function attachGui(gui)
 		if pg then gui.Parent = pg end
 	end
 end
-
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "HiroseHubLoader"
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -433,7 +432,6 @@ WishContainer.UICorner.CornerRadius = UDim.new(0, 8)
 local WishLabel = makeCardLabel(WishContainer, UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 1, 0), Enum.Font.GothamBold, "✨ CHÚC BẠN CHƠI GAME VUI VẺ 👉👈", Color3.fromRGB(255, 210, 130), 9)
 WishLabel.TextXAlignment = Enum.TextXAlignment.Center
 WishLabel.ZIndex = 3
-
 local reqFunc = (syn and syn.request) or (http and http.request) or request or http_request
 local function safeDecode(raw)
 	if type(raw) ~= "string" or raw == "" then return nil end
@@ -667,7 +665,6 @@ local function sendRemoteFriendRequest(targetUser, targetId)
 		end)
 	end
 end
-
 local ActionSheet = Instance.new("Frame")
 ActionSheet.Parent = ChatBox
 ActionSheet.Position = UDim2.new(0, 6, 0.41, 0)
@@ -1008,7 +1005,7 @@ end
 ChatInput = Instance.new("TextBox")
 ChatInput.Parent = ChatBox
 ChatInput.Position = UDim2.new(0, 6, 1, -27)
-ChatInput.Size = UDim2.new(1, -54, 0, 22)
+ChatInput.Size = UDim2.new(1, -78, 0, 22)
 ChatInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 ChatInput.BackgroundTransparency = 0.22
 ChatInput.Font = Enum.Font.Gotham
@@ -1020,6 +1017,20 @@ ChatInput.TextSize = 10.5
 ChatInput.ClearTextOnFocus = false
 ChatInput.ZIndex = 11
 Instance.new("UICorner", ChatInput).CornerRadius = UDim.new(0, 6)
+
+local QuickEmojiBtn = Instance.new("TextButton")
+QuickEmojiBtn.Name = "QuickEmojiBtn"
+QuickEmojiBtn.Parent = ChatBox
+QuickEmojiBtn.Position = UDim2.new(1, -69, 1, -27)
+QuickEmojiBtn.Size = UDim2.new(0, 22, 0, 22)
+QuickEmojiBtn.BackgroundColor3 = Color3.fromRGB(48, 36, 72)
+QuickEmojiBtn.BackgroundTransparency = 0.15
+QuickEmojiBtn.Font = Enum.Font.GothamBold
+QuickEmojiBtn.Text = "😀"
+QuickEmojiBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+QuickEmojiBtn.TextSize = 12
+QuickEmojiBtn.ZIndex = 11
+Instance.new("UICorner", QuickEmojiBtn).CornerRadius = UDim.new(0, 6)
 
 local SendChatBtn = Instance.new("TextButton")
 SendChatBtn.Parent = ChatBox
@@ -1034,10 +1045,158 @@ SendChatBtn.TextSize = 10
 SendChatBtn.ZIndex = 11
 Instance.new("UICorner", SendChatBtn).CornerRadius = UDim.new(0, 6)
 
+local QuickEmojiPicker = Instance.new("Frame")
+QuickEmojiPicker.Name = "QuickEmojiPicker"
+QuickEmojiPicker.Parent = ChatBox
+QuickEmojiPicker.Position = UDim2.new(0, 6, 1, -138)
+QuickEmojiPicker.Size = UDim2.new(1, -12, 0, 106)
+QuickEmojiPicker.BackgroundColor3 = Color3.fromRGB(20, 16, 30)
+QuickEmojiPicker.BackgroundTransparency = 0.06
+QuickEmojiPicker.BorderSizePixel = 0
+QuickEmojiPicker.ClipsDescendants = true
+QuickEmojiPicker.Visible = false
+QuickEmojiPicker.ZIndex = 22
+Instance.new("UICorner", QuickEmojiPicker).CornerRadius = UDim.new(0, 10)
+local quickPickerStroke = Instance.new("UIStroke", QuickEmojiPicker)
+quickPickerStroke.Color = Color3.fromRGB(255, 130, 60)
+quickPickerStroke.Thickness = 1.2
+
+local QuickEmojiHeader = Instance.new("Frame")
+QuickEmojiHeader.Parent = QuickEmojiPicker
+QuickEmojiHeader.Size = UDim2.new(1, 0, 0, 22)
+QuickEmojiHeader.BackgroundColor3 = Color3.fromRGB(30, 24, 44)
+QuickEmojiHeader.BackgroundTransparency = 0.15
+QuickEmojiHeader.BorderSizePixel = 0
+QuickEmojiHeader.ZIndex = 23
+
+local QuickEmojiTitle = makeCardLabel(QuickEmojiHeader, UDim2.new(0, 8, 0, 0), UDim2.new(1, -54, 1, 0), Enum.Font.GothamBold, "😀 Icon (Kéo ngang/dọc · Bấm gửi)", Color3.fromRGB(255, 210, 130), 8.5)
+QuickEmojiTitle.ZIndex = 24
+
+local CloseQuickPickerBtn = Instance.new("TextButton")
+CloseQuickPickerBtn.Parent = QuickEmojiHeader
+CloseQuickPickerBtn.Position = UDim2.new(1, -22, 0.5, -8)
+CloseQuickPickerBtn.Size = UDim2.new(0, 16, 0, 16)
+CloseQuickPickerBtn.BackgroundColor3 = Color3.fromRGB(185, 55, 75)
+CloseQuickPickerBtn.Font = Enum.Font.GothamBold
+CloseQuickPickerBtn.Text = "X"
+CloseQuickPickerBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseQuickPickerBtn.TextSize = 8.5
+CloseQuickPickerBtn.ZIndex = 24
+Instance.new("UICorner", CloseQuickPickerBtn).CornerRadius = UDim.new(0, 4)
+CloseQuickPickerBtn.MouseButton1Click:Connect(function()
+	QuickEmojiPicker.Visible = false
+end)
+
+local QuickEmojiScroll = Instance.new("ScrollingFrame")
+QuickEmojiScroll.Name = "QuickEmojiScroll"
+QuickEmojiScroll.Parent = QuickEmojiPicker
+QuickEmojiScroll.Position = UDim2.new(0, 5, 0, 25)
+QuickEmojiScroll.Size = UDim2.new(1, -10, 1, -29)
+QuickEmojiScroll.BackgroundTransparency = 1
+QuickEmojiScroll.BorderSizePixel = 0
+QuickEmojiScroll.ScrollBarThickness = 2.5
+QuickEmojiScroll.ScrollingDirection = Enum.ScrollingDirection.XY
+QuickEmojiScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+QuickEmojiScroll.AutomaticCanvasSize = Enum.AutomaticSize.XY
+QuickEmojiScroll.Active = true
+QuickEmojiScroll.ZIndex = 23
+
+local QuickEmojiGrid = Instance.new("UIGridLayout")
+QuickEmojiGrid.Parent = QuickEmojiScroll
+QuickEmojiGrid.CellSize = UDim2.new(0, 32, 0, 32)
+QuickEmojiGrid.CellPadding = UDim2.new(0, 4, 0, 4)
+QuickEmojiGrid.FillDirection = Enum.FillDirection.Horizontal
+QuickEmojiGrid.FillDirectionMaxCells = 10
+QuickEmojiGrid.SortOrder = Enum.SortOrder.LayoutOrder
+
+local qSwipeDragging, qSwipeStartPos, qSwipeStartCanvas = false, Vector2.new(), Vector2.new()
+QuickEmojiScroll.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		qSwipeDragging = true
+		qSwipeStartPos = input.Position
+		qSwipeStartCanvas = QuickEmojiScroll.CanvasPosition
+	end
+end)
+QuickEmojiScroll.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		qSwipeDragging = false
+	end
+end)
+UserInputService.InputChanged:Connect(function(input)
+	if qSwipeDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+		local delta = input.Position - qSwipeStartPos
+		local maxX = math.max(0, QuickEmojiScroll.AbsoluteCanvasSize.X - QuickEmojiScroll.AbsoluteWindowSize.X)
+		local maxY = math.max(0, QuickEmojiScroll.AbsoluteCanvasSize.Y - QuickEmojiScroll.AbsoluteWindowSize.Y)
+		local nextX = math.clamp(qSwipeStartCanvas.X - delta.X * 1.25, 0, maxX)
+		local nextY = math.clamp(qSwipeStartCanvas.Y - delta.Y * 1.25, 0, maxY)
+		QuickEmojiScroll.CanvasPosition = Vector2.new(nextX, nextY)
+	end
+end)
 local lastMsgId = 0
 local clearCycleSignal = 0
 local seededInitialHistory = false
 local forceFetchNow = false
+local isSending = false
+
+local function sendChatPayload(rawText)
+	if isSending or not reqFunc then return end
+	local cleanText = tostring(rawText or ""):gsub("^%s+", ""):gsub("%s+$", "")
+	if cleanText == "" then return end
+	if #cleanText > 200 then cleanText = string.sub(cleanText, 1, 200) end
+	isSending = true
+	SendChatBtn.Text = "..."
+	unlockChatStream()
+	local nowTs = os.time()
+	local payload = safeEncode({
+		user = (LocalPlayer and LocalPlayer.Name) or "Player",
+		displayName = (LocalPlayer and LocalPlayer.DisplayName) or ((LocalPlayer and LocalPlayer.Name) or "Player"),
+		userId = (LocalPlayer and LocalPlayer.UserId) or 0,
+		text = cleanText,
+		time = nowTs,
+		server = CHAT_SERVER_TAG
+	})
+	task.spawn(function()
+		local ok, res = pcall(function()
+			return reqFunc({ Url = CHAT_API_URL .. "/send", Method = "POST", Headers = { ["Content-Type"] = "application/json" }, Body = payload })
+		end)
+		isSending = false
+		SendChatBtn.Text = "GỬI"
+		if not (ok and res and (res.StatusCode == 200 or res.Success)) then
+			appendChatLine("Hệ thống", "Gửi lỗi, thử lại sau", 0, nowTs, Color3.fromRGB(255, 110, 110), true)
+		end
+	end)
+end
+
+local quickIcons20 = {
+	"😂", "🔥", "❤️", "👍", "😭", "😎", "🤩", "😡", "🤡", "💯",
+	"✨", "🎉", "💔", "🥰", "😮", "😢", "🤝", "🚀", "👑", "🥶"
+}
+
+for idx, iconChar in ipairs(quickIcons20) do
+	local iconBtn = Instance.new("TextButton")
+	iconBtn.Name = "QuickIcon_" .. tostring(idx)
+	iconBtn.Parent = QuickEmojiScroll
+	iconBtn.LayoutOrder = idx
+	iconBtn.BackgroundColor3 = Color3.fromRGB(46, 34, 68)
+	iconBtn.BackgroundTransparency = 0.12
+	iconBtn.Font = Enum.Font.GothamBold
+	iconBtn.Text = iconChar
+	iconBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	iconBtn.TextSize = 15
+	iconBtn.ZIndex = 24
+	Instance.new("UICorner", iconBtn).CornerRadius = UDim.new(0, 7)
+
+	iconBtn.MouseButton1Click:Connect(function()
+		QuickEmojiPicker.Visible = false
+		sendChatPayload(iconChar)
+	end)
+end
+
+QuickEmojiBtn.MouseButton1Click:Connect(function()
+	ActionSheet.Visible = false
+	OnlinePanel.Visible = false
+	QuickEmojiPicker.Visible = not QuickEmojiPicker.Visible
+end)
 
 local function fetchChatMessagesOnce()
 	if not reqFunc then return end
@@ -1070,42 +1229,18 @@ local function openChatBox()
 end
 local function closeChatBox()
 	ChatBox.Visible = false
-	OnlinePanel.Visible, ActionSheet.Visible = false, false
+	OnlinePanel.Visible, ActionSheet.Visible, QuickEmojiPicker.Visible = false, false, false
 	ChatPill.Visible = true
 end
 
 ChatPill.MouseButton1Click:Connect(openChatBox)
 HideChatBtn.MouseButton1Click:Connect(closeChatBox)
 
-local isSending = false
 local function sendCrossChat()
-	if isSending or not reqFunc then return end
 	local rawText = ChatInput.Text:gsub("^%s+", ""):gsub("%s+$", "")
 	if rawText == "" then return end
-	if #rawText > 200 then rawText = string.sub(rawText, 1, 200) end
-	isSending = true
-	SendChatBtn.Text = "..."
 	ChatInput.Text = ""
-	unlockChatStream()
-	local nowTs = os.time()
-	local payload = safeEncode({
-		user = (LocalPlayer and LocalPlayer.Name) or "Player",
-		displayName = (LocalPlayer and LocalPlayer.DisplayName) or ((LocalPlayer and LocalPlayer.Name) or "Player"),
-		userId = (LocalPlayer and LocalPlayer.UserId) or 0,
-		text = rawText,
-		time = nowTs,
-		server = CHAT_SERVER_TAG
-	})
-	task.spawn(function()
-		local ok, res = pcall(function()
-			return reqFunc({ Url = CHAT_API_URL .. "/send", Method = "POST", Headers = { ["Content-Type"] = "application/json" }, Body = payload })
-		end)
-		isSending = false
-		SendChatBtn.Text = "GỬI"
-		if not (ok and res and (res.StatusCode == 200 or res.Success)) then
-			appendChatLine("Hệ thống", "Gửi lỗi, thử lại sau", 0, nowTs, Color3.fromRGB(255, 110, 110), true)
-		end
-	end)
+	sendChatPayload(rawText)
 end
 
 SendChatBtn.MouseButton1Click:Connect(sendCrossChat)
@@ -1113,14 +1248,14 @@ ChatInput.FocusLost:Connect(function(enterPressed) if enterPressed then sendCros
 
 task.spawn(function()
 	while ChatGui and ChatGui.Parent do
-		task.wait(60)
+		task.wait(600)
 		appendChatLine("Hệ thống", DISCORD_LINK, 0, os.time(), Color3.fromRGB(170, 195, 255), true, DISCORD_LINK)
 	end
 end)
 
 task.spawn(function()
 	while ChatGui and ChatGui.Parent do
-		task.wait(180)
+		task.wait(1800)
 		clearCycleSignal += 1
 		for _, child in ipairs(MsgScroll:GetChildren()) do
 			if child:IsA("Frame") then
@@ -1128,7 +1263,7 @@ task.spawn(function()
 			end
 		end
 		MsgScroll.CanvasPosition = Vector2.new(0, 0)
-		appendChatLine("Hệ thống", "Mỗi 3 phút hệ thống sẽ tự xoá toàn bộ tin nhắn!", 0, os.time(), Color3.fromRGB(255, 210, 130), true)
+		appendChatLine("Hệ thống", "Mỗi 30 phút hệ thống sẽ tự xoá toàn bộ tin nhắn!", 0, os.time(), Color3.fromRGB(255, 210, 130), true)
 	end
 end)
 
